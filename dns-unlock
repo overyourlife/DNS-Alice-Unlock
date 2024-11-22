@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# 一键安装和配置 dnsmasq 脚本
+# 请确保使用 sudo 或 root 权限运行此脚本
+
+# 指定配置文件路径
+CONFIG_FILE="/path/to/your/dnsmasq.conf"
+
+# 检查是否以 root 身份运行
+if [ "$EUID" -ne 0 ]; then
+  echo "请以 root 权限运行此脚本！"
+  exit 1
+fi
+
+# 安装 dnsmasq
+echo "正在安装 dnsmasq..."
+apt update && apt install -y dnsmasq
+
+# 检查安装是否成功
+if ! command -v dnsmasq &> /dev/null; then
+  echo "dnsmasq 安装失败，请检查网络或软件源设置！"
+  exit 1
+fi
+
+# 备份原有配置文件
+echo "备份原有的 dnsmasq 配置文件..."
+if [ -f /etc/dnsmasq.conf ]; then
+  mv /etc/dnsmasq.conf /etc/dnsmasq.conf.bak
+fi
+
+# 替换为用户指定的配置文件
+echo "应用用户指定的配置文件..."
+cp "$CONFIG_FILE" /etc/dnsmasq.conf
+
+# 修改 /etc/resolv.conf
+echo "修改 /etc/resolv.conf，设置 nameserver 为 127.0.0.1..."
+if ! grep -q "nameserver 127.0.0.1" /etc/resolv.conf; then
+  # 备份 resolv.conf
+  cp /etc/resolv.conf /etc/resolv.conf.bak
+  # 写入新的 nameserver
+  echo -e "nameserver 127.0.0.1\n$(cat /etc/resolv.conf)" > /etc/resolv.conf
+fi
+
+# 重启 dnsmasq 服务
+echo "重启 dnsmasq 服务..."
+systemctl restart dnsmasq
+
+# 检查 dnsmasq 服务状态
+if systemctl is-active --quiet dnsmasq; then
+  echo "dnsmasq 已成功安装并配置完成！"
+else
+  echo "dnsmasq 启动失败，请检查配置文件是否正确！"
+  exit 1
+fi
+
+echo "所有操作已完成！"
