@@ -27,7 +27,8 @@ echo "3. 一键更新 dnsmasq 配置文件"
 echo "4. 解锁 /etc/resolv.conf 文件"
 echo "5. 锁定 /etc/resolv.conf 文件"
 echo "6. 恢复原始 /etc/resolv.conf.bak 文件"
-read -p "请输入数字 (1-6): " choice
+echo "7. 检测流媒体解锁支持情况"
+read -p "请输入数字 (1-7): " choice
 
 case $choice in
 1)
@@ -103,8 +104,18 @@ case $choice in
     echo "备份文件 /etc/resolv.conf.bak 不存在，无法恢复！"
   fi
   ;;
+7)
+  # 检测流媒体解锁支持情况
+  echo "检测流媒体解锁支持情况..."
+  bash <(curl -sL IP.Check.Place)
+  if [ $? -eq 0 ]; then
+    echo "流媒体解锁检测完成！"
+  else
+    echo "流媒体解锁检测失败，请检查网络连接或脚本 URL！"
+  fi
+  ;;
 *)
-  echo "无效选项，请重新运行脚本并选择 1-6。"
+  echo "无效选项，请重新运行脚本并选择 1-7。"
   exit 1
   ;;
 esac
