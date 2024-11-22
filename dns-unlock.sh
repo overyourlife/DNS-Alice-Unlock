@@ -6,6 +6,7 @@
 # 指定配置文件的下载地址
 CONFIG_URL="https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/dnsmasq.conf"
 CONFIG_FILE="/etc/dnsmasq.conf"
+SCRIPT_NAME="dns-alice-unlock.sh"
 
 # 检查是否以 root 身份运行
 if [ "$EUID" -ne 0 ]; then
@@ -29,7 +30,8 @@ echo "5. 锁定 /etc/resolv.conf 文件"
 echo "6. 恢复原始 /etc/resolv.conf.bak 文件"
 echo "7. 检测流媒体解锁支持情况"
 echo "8. 检查端口 53 是否被占用"
-read -p "请输入数字 (1-8): " choice
+echo "9. 卸载本脚本并删除本地文件"
+read -p "请输入数字 (1-9): " choice
 
 case $choice in
 1)
@@ -186,8 +188,19 @@ case $choice in
   fi
   ;;
 
+9)
+  # 卸载本脚本并删除本地文件
+  echo "正在卸载本脚本并删除本地文件..."
+  if [ -f "$SCRIPT_NAME" ]; then
+    rm -f "$SCRIPT_NAME"
+    echo "脚本文件已删除！"
+  else
+    echo "脚本文件不存在，无法删除！"
+  fi
+  ;;
+
 *)
-  echo "无效选项，请重新运行脚本并选择 1-8。"
+  echo "无效选项，请重新运行脚本并选择 1-9。"
   exit 1
   ;;
 esac
