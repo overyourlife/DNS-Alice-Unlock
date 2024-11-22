@@ -36,14 +36,14 @@ if ! curl -o "$CONFIG_FILE" "$CONFIG_URL"; then
   exit 1
 fi
 
-# 修改 /etc/resolv.conf
-echo "修改 /etc/resolv.conf，设置 nameserver 为 127.0.0.1..."
-if ! grep -q "nameserver 127.0.0.1" /etc/resolv.conf; then
-  # 备份 resolv.conf
-  cp /etc/resolv.conf /etc/resolv.conf.bak
-  # 写入新的 nameserver
-  echo -e "nameserver 127.0.0.1\n$(cat /etc/resolv.conf)" > /etc/resolv.conf
+# 备份并创建新的 /etc/resolv.conf
+echo "备份原有的 /etc/resolv.conf 文件..."
+if [ -f /etc/resolv.conf ]; then
+  mv /etc/resolv.conf /etc/resolv.conf.bak
 fi
+
+echo "创建新的 /etc/resolv.conf 文件，并设置 nameserver 为 127.0.0.1..."
+echo "nameserver 127.0.0.1" > /etc/resolv.conf
 
 # 锁定 /etc/resolv.conf 文件
 echo "锁定 /etc/resolv.conf 文件，防止被修改..."
@@ -61,4 +61,4 @@ else
   exit 1
 fi
 
-echo "所有操作已完成！/etc/resolv.conf 文件已锁定。"
+echo "所有操作已完成！/etc/resolv.conf 文件已备份为 resolv.conf.bak，并已锁定新文件。"
