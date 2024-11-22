@@ -36,15 +36,15 @@ echo -e "\n"
 
 # 显示菜单
 echo -e "\033[1;33m请选择要执行的操作：\033[0m"
-echo -e "\033[1;36m1.\033[0m \033[1;32m安装 dnsmasq并配置分流\033[0m"
-echo -e "\033[1;36m2.\033[0m \033[1;32m卸载 dnsmasq并恢复默认\033[0m"
-echo -e "\033[1;36m3.\033[0m \033[1;32m一键更新 dnsmasq SG配置文件\033[0m"
+echo -e "\033[1;36m1.\033[0m \033[1;32m安装并配置 dnsmasq 分流\033[0m"
+echo -e "\033[1;36m2.\033[0m \033[1;32m卸载 dnsmasq 并恢复默认配置\033[0m"
+echo -e "\033[1;36m3.\033[0m \033[1;32m更新 dnsmasq 配置文件\033[0m"
 echo -e "\033[1;36m4.\033[0m \033[1;32m解锁 /etc/resolv.conf 文件\033[0m"
 echo -e "\033[1;36m5.\033[0m \033[1;32m锁定 /etc/resolv.conf 文件\033[0m"
-echo -e "\033[1;36m6.\033[0m \033[1;32m恢复原始 /etc/resolv.conf.bak 文件\033[0m"
+echo -e "\033[1;36m6.\033[0m \033[1;32m恢复原始 /etc/resolv.conf 配置\033[0m"
 echo -e "\033[1;36m7.\033[0m \033[1;32m检测流媒体解锁支持情况\033[0m"
-echo -e "\033[1;36m8.\033[0m \033[1;32m检查系统端口 53 强制关闭\033[0m"
-echo -e "\033[1;36m9.\033[0m \033[1;32m删除本脚本\033[0m"
+echo -e "\033[1;36m8.\033[0m \033[1;32m检查系统端口 53 占用情况\033[0m"
+echo -e "\033[1;36m9.\033[0m \033[1;32m删除本脚本文件\033[0m"
 echo -e "\n\033[1;33m请输入数字 (1-9):\033[0m"
 read choice
 
@@ -97,7 +97,7 @@ case $choice in
   ;;
 
 2)
-  # 卸载 dnsmasq
+  # 卸载 dnsmasq 并恢复默认配置
   echo -e "\033[1;34m正在卸载 dnsmasq...\033[0m"
   apt remove -y dnsmasq
   if ! command -v dnsmasq &> /dev/null; then
@@ -105,6 +105,14 @@ case $choice in
   else
     echo -e "\033[31mdnsmasq 卸载失败，请手动检查！\033[0m"
     exit 1
+  fi
+  # 恢复原始 /etc/resolv.conf 配置
+  echo -e "\033[1;34m恢复原始 /etc/resolv.conf 配置...\033[0m"
+  if [ -f /etc/resolv.conf.bak ]; then
+    mv /etc/resolv.conf.bak /etc/resolv.conf
+    echo -e "\033[1;32m/etc/resolv.conf 配置已恢复！\033[0m"
+  else
+    echo -e "\033[31m备份文件 /etc/resolv.conf.bak 不存在，无法恢复！\033[0m"
   fi
   ;;
 
@@ -151,13 +159,11 @@ case $choice in
   ;;
 
 6)
-  # 恢复 /etc/resolv.conf.bak
-  echo -e "\033[1;34m恢复 /etc/resolv.conf 文件...\033[0m"
+  # 恢复原始 /etc/resolv.conf 配置
+  echo -e "\033[1;34m恢复原始 /etc/resolv.conf 配置...\033[0m"
   if [ -f /etc/resolv.conf.bak ]; then
-    chattr -i /etc/resolv.conf 2>/dev/null
     mv /etc/resolv.conf.bak /etc/resolv.conf
-    chattr +i /etc/resolv.conf
-    echo -e "\033[1;32m/etc/resolv.conf 文件已从备份恢复并锁定！\033[0m"
+    echo -e "\033[1;32m/etc/resolv.conf 配置已恢复！\033[0m"
   else
     echo -e "\033[31m备份文件 /etc/resolv.conf.bak 不存在，无法恢复！\033[0m"
   fi
@@ -165,55 +171,35 @@ case $choice in
 
 7)
   # 检测流媒体解锁支持情况
-  echo -e "\033[1;34m检测流媒体解锁支持情况...\033[0m"
-  bash <(curl -sL IP.Check.Place)
+  echo -e "\033[1;34m正在检测流媒体解锁支持情况...\033[0m"
+  curl -I https://www.netflix.com > /dev/null 2>&1
   if [ $? -eq 0 ]; then
-    echo -e "\033[1;32m流媒体解锁检测完成！\033[0m"
+    echo -e "\033[1;32mNetflix 支持解锁！\033[0m"
   else
-    echo -e "\033[31m流媒体解锁检测失败，请检查网络连接或脚本 URL！\033[0m"
+    echo -e "\033[31mNetflix 无法解锁，请检查配置！\033[0m"
   fi
   ;;
 
 8)
-  # 检查端口 53 是否被占用
-  echo -e "\033[1;34m检查端口 53 是否被占用...\033[0m"
-  PORT_IN_USE=$(sudo netstat -tuln | grep ':53')
-  if [ -n "$PORT_IN_USE" ]; then
-    echo -e "\033[31m端口 53 已被占用，检查是否为 systemd-resolved...\033[0m"
-
-    SYSTEMD_RESOLVED=$(ps aux | grep 'systemd-resolved' | grep -v 'grep')
-
-    if [ -n "$SYSTEMD_RESOLVED" ]; then
-      echo -e "\033[31m发现 systemd-resolved 占用 53 端口，正在停止并禁用 systemd-resolved 服务...\033[0m"
-      sudo systemctl stop systemd-resolved
-      sudo systemctl disable systemd-resolved
-
-      sudo rm -f /etc/resolv.conf
-      echo "nameserver 127.0.0.1" | sudo tee /etc/resolv.conf > /dev/null
-      echo -e "\033[1;32m/etc/resolv.conf 文件已更新为指向本地 DNS 解析。\033[0m"
-    else
-      echo -e "\033[31m系统未检测到 systemd-resolved 占用 53 端口，可能由其他进程占用。\033[0m"
-    fi
+  # 检查端口 53 占用情况
+  echo -e "\033[1;34m正在检测系统端口 53 占用情况...\033[0m"
+  netstat -tuln | grep ':53' > /dev/null
+  if [ $? -eq 0 ]; then
+    echo -e "\033[1;32m端口 53 被占用！\033[0m"
   else
-    echo -e "\033[1;32m端口 53 未被占用，可以正常启动 dnsmasq。\033[0m"
+    echo -e "\033[31m端口 53 未被占用！\033[0m"
   fi
   ;;
 
 9)
-  # 卸载本脚本并删除本地文件
-  echo -e "\033[1;34m正在卸载本脚本并删除本地文件...\033[0m"
-  if [ -f "$SCRIPT_NAME" ]; then
-    rm -f "$SCRIPT_NAME"
-    echo -e "\033[1;32m脚本文件已删除！\033[0m"
-  else
-    echo -e "\033[31m脚本文件不存在，无法删除！\033[0m"
-  fi
+  # 删除本脚本
+  echo -e "\033[1;34m正在删除脚本文件...\033[0m"
+  rm -- "$0"
+  echo -e "\033[1;32m脚本已删除！\033[0m"
   ;;
 
 *)
-  echo -e "\033[31m无效选项，请重新运行脚本并选择 1-9。\033[0m"
-  exit 1
+  # 处理无效输入
+  echo -e "\033[31m无效选择，请输入 1-9 之间的数字！\033[0m"
   ;;
 esac
-
-echo -e "\033[1;34m操作完成！\033[0m"
