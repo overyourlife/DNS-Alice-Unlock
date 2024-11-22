@@ -36,12 +36,15 @@ if ! curl -o "$CONFIG_FILE" "$CONFIG_URL"; then
   exit 1
 fi
 
-# 备份并创建新的 /etc/resolv.conf
+# 备份并强制删除 /etc/resolv.conf
 echo "备份原有的 /etc/resolv.conf 文件..."
 if [ -f /etc/resolv.conf ]; then
   mv /etc/resolv.conf /etc/resolv.conf.bak
+  echo "删除原有的 /etc/resolv.conf 文件..."
+  rm -f /etc/resolv.conf
 fi
 
+# 创建新的 /etc/resolv.conf 文件
 echo "创建新的 /etc/resolv.conf 文件，并设置 nameserver 为 127.0.0.1..."
 echo "nameserver 127.0.0.1" > /etc/resolv.conf
 
@@ -61,4 +64,4 @@ else
   exit 1
 fi
 
-echo "所有操作已完成！/etc/resolv.conf 文件已备份为 resolv.conf.bak，并已锁定新文件。"
+echo "所有操作已完成！原始的 /etc/resolv.conf 文件已备份为 resolv.conf.bak，新文件已锁定。"
