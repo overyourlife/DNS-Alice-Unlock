@@ -3,6 +3,10 @@
 # 一键管理和配置 dnsmasq 脚本
 # 请确保使用 sudo 或 root 权限运行此脚本
 
+# 脚本版本和更新时间
+VERSION="V0.1"
+LAST_UPDATED=$(date +"%Y-%m-%d")
+
 # 指定配置文件的下载地址
 CONFIG_URL="https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/dnsmasq.conf"
 CONFIG_FILE="/etc/dnsmasq.conf"
@@ -24,6 +28,8 @@ fi
 # 显示标题和备注
 echo -e "\033[1;34m======================================\033[0m"
 echo -e "\033[1;32m       一键配置 dnsmasq 脚本       \033[0m"
+echo -e "\033[1;36m       版本：$VERSION       \033[0m"
+echo -e "\033[1;36m       更新时间：$LAST_UPDATED       \033[0m"
 echo -e "\033[1;36m       本脚本由 $AUTHOR 维护       \033[0m"
 echo -e "\033[1;34m======================================\033[0m"
 echo -e "\n"
