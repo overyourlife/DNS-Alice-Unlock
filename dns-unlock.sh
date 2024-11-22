@@ -13,6 +13,12 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
+# 检查系统是否为 Debian/Ubuntu
+if ! grep -Ei 'debian|ubuntu' /etc/os-release > /dev/null; then
+  echo "此脚本仅适用于 Debian 和 Ubuntu 系统！"
+  exit 1
+fi
+
 # 显示菜单
 echo "请选择要执行的操作："
 echo "1. 安装 dnsmasq"
@@ -27,7 +33,7 @@ case $choice in
 1)
   # 安装 dnsmasq
   echo "正在安装 dnsmasq..."
-  apt update && apt install -y dnsmasq curl
+  apt update -y && apt install -y dnsmasq curl
   if command -v dnsmasq &> /dev/null; then
     echo "dnsmasq 安装成功！"
   else
