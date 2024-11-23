@@ -45,6 +45,7 @@ echo -e "\033[1;36m6.\033[0m \033[1;32m恢复原始 /etc/resolv.conf 配置\033[
 echo -e "\033[1;36m7.\033[0m \033[1;32m检测流媒体解锁支持情况\033[0m"
 echo -e "\033[1;36m8.\033[0m \033[1;32m检查系统端口 53 占用情况\033[0m"
 echo -e "\033[1;36m9.\033[0m \033[1;32m删除本脚本文件\033[0m"
+echo -e "\033[1;36m10.\033[0m \033[1;32m一键更换 resolv.conf 中的 nameserver\033[0m"
 echo -e "\n\033[1;33m请输入数字 (1-9):\033[0m"
 read choice
 
@@ -197,6 +198,32 @@ case $choice in
   rm -- "$0"
   echo -e "\033[1;32m脚本已删除！\033[0m"
   ;;
+
+10)
+  # 更换 resolv.conf 中的 nameserver
+  echo -e "\033[1;33m请选择要更换的 nameserver：\033[0m"
+  echo -e "\033[1;36m1.\033[0m \033[1;32m更换为香港 HK nameserver: 154.12.177.22\033[0m"
+  echo -e "\033[1;36m2.\033[0m \033[1;32m更换为新加坡 SG nameserver: 157.20.104.47\033[0m"
+  echo -e "\033[1;33m请输入数字 (1-2):\033[0m"
+  read ns_choice
+
+  case $ns_choice in
+  1)
+    echo -e "\033[1;34m设置 nameserver 为 154.12.177.22...\033[0m"
+    echo "nameserver 154.12.177.22" > /etc/resolv.conf
+    echo -e "\033[1;34m锁定 /etc/resolv.conf 文件...\033[0m"
+    chattr +i /etc/resolv.conf
+    echo -e "\033[1;32m操作成功！当前 nameserver 已设置为 154.12.177.22 并锁定。\033[0m"
+    ;;
+
+  2)
+    echo -e "\033[1;34m设置 nameserver 为 157.20.104.47...\033[0m"
+    echo "nameserver 157.20.104.47" > /etc/resolv.conf
+    echo -e "\033[1;34m锁定 /etc/resolv.conf 文件...\033[0m"
+    chattr +i /etc/resolv.conf
+    echo -e "\033[1;32m操作成功！当前 nameserver 已设置为 157.20.104.47 并锁定。\033[0m"
+    ;;
+
 
 *)
   # 处理无效输入
