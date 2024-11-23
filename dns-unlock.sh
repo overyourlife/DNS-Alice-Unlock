@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_0.6.2"
+VERSION="V_0.6.3"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -125,12 +125,63 @@ case $choice in
 
 3)
   # 更新 dnsmasq 配置文件
-  echo "执行更新 dnsmasq 配置文件的相关操作..."
-  curl -o $CONFIG_FILE $CONFIG_URL
+  echo -e "\033[1;34m进入 dnsmasq 配置文件更新菜单...\033[0m"
+  echo -e "\033[1;33m请选择要更新的配置：\033[0m"
+  echo -e "\033[1;36m1.\033[0m \033[1;32m更新为 HK 配置\033[0m"
+  echo -e "\033[1;36m2.\033[0m \033[1;32m更新为 SG 配置\033[0m"
+  echo -e "\033[1;33m请输入数字 (1-2):\033[0m"
+  read config_choice
+
+  # 根据选择进入下一步操作
+  case $config_choice in
+  1)
+    # 更新为 HK 配置
+    CONFIG_URL="https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/dnsmasq.conf.hk"
+    TARGET_FILE="dnsmasq.conf.hk"
+    REGION="HK"
+    ;;
+  2)
+    # 更新为 SG 配置
+    CONFIG_URL="https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/dnsmasq.conf.sg"
+    TARGET_FILE="dnsmasq.conf.sg"
+    REGION="SG"
+    ;;
+  *)
+    echo -e "\033[31m无效选择，请输入 1 或 2！\033[0m"
+    exit 1
+    ;;
+  esac
+
+  echo -e "\033[1;34m开始更新为 $REGION 配置...\033[0m"
+
+  # 备份旧的配置文件
+  if [ -f /etc/dnsmasq.conf ]; then
+    echo -e "\033[1;33m备份原有配置文件为 /etc/dnsmasq.conf.bak...\033[0m"
+    mv /etc/dnsmasq.conf /etc/dnsmasq.conf.bak
+  fi
+
+  # 下载新的配置文件
+  echo -e "\033[1;33m下载新的 $REGION 配置文件...\033[0m"
+  curl -o "/etc/$TARGET_FILE" "$CONFIG_URL"
   if [ $? -eq 0 ]; then
-    echo -e "\033[1;32m配置文件已成功更新！\033[0m"
+    mv "/etc/$TARGET_FILE" /etc/dnsmasq.conf
+    echo -e "\033[1;32m$REGION 配置文件更新成功！\033[0m"
+    
+    # 重启 dnsmasq 服务
+    echo -e "\033[1;33m重启 dnsmasq 服务...\033[0m"
+    systemctl restart dnsmasq
+    if [ $? -eq 0 ]; then
+      echo -e "\033[1;32mdnsmasq 服务重启成功！\033[0m"
+    else
+      echo -e "\033[31m重启 dnsmasq 服务失败，请检查日志！\033[0m"
+    fi
   else
-    echo -e "\033[31m[错误] 配置文件更新失败！\033[0m"
+    echo -e "\033[31m$REGION 配置文件下载失败，请检查网络连接！\033[0m"
+    # 恢复原始配置（如果有备份）
+    if [ -f /etc/dnsmasq.conf.bak ]; then
+      echo -e "\033[1;33m恢复原始配置文件...\033[0m"
+      mv /etc/dnsmasq.conf.bak /etc/dnsmasq.conf
+    fi
   fi
   ;;
 
