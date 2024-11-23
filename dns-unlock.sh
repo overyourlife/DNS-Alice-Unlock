@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_0.3"
+VERSION="V_0.4 test"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -44,7 +44,7 @@ echo -e "\033[1;36m5.\033[0m \033[1;32m锁定 /etc/resolv.conf 文件\033[0m"
 echo -e "\033[1;36m6.\033[0m \033[1;32m恢复原始 /etc/resolv.conf 配置\033[0m"
 echo -e "\033[1;36m7.\033[0m \033[1;32m检测流媒体解锁支持情况\033[0m"
 echo -e "\033[1;36m8.\033[0m \033[1;32m检查系统端口 53 占用情况\033[0m"
-echo -e "\033[1;36m9.\033[0m \033[1;32m删除本脚本\033[0m"
+echo -e "\033[1;36m9.\033[0m \033[1;32m删除本脚本文件\033[0m"
 echo -e "\n\033[1;33m请输入数字 (1-9):\033[0m"
 read choice
 
@@ -172,11 +172,11 @@ case $choice in
 7)
   # 检测流媒体解锁支持情况
   echo -e "\033[1;34m正在检测流媒体解锁支持情况...\033[0m"
-  curl -I https://www.netflix.com > /dev/null 2>&1
+  bash <(curl -sL IP.Check.Place)
   if [ $? -eq 0 ]; then
-    echo -e "\033[1;32mNetflix 支持解锁！\033[0m"
+    echo -e "\033[1;32m检测完成，请查看具体解锁信息！\033[0m"
   else
-    echo -e "\033[31mNetflix 无法解锁，请检查配置！\033[0m"
+    echo -e "\033[31m检测失败，请检查网络或 IP.Check.Place 可用性！\033[0m"
   fi
   ;;
 
