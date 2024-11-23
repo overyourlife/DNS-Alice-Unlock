@@ -18,12 +18,13 @@
    ```bash
    wget https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/dns-unlock.sh && bash dns-unlock.sh
 
+   ---
+
 ### 解锁方式 1：DNS 分流模式
 1. 在脚本菜单中选择 `1`。
 2. 脚本将自动安装并配置 `dnsmasq`，实现多媒体流量的智能分流。
    - **适用场景**：优化流媒体（如 Netflix、YouTube）访问体验，确保内容加载更快，播放更流畅。
 
----
 
 ### 解锁方式 2：全局 DNS 替换模式
 1. 在脚本菜单中选择 `10`。
