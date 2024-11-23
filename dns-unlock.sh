@@ -202,8 +202,8 @@ case $choice in
 10)
   # 更换 resolv.conf 中的 nameserver
   echo -e "\033[1;33m请选择要更换的 nameserver：\033[0m"
-  echo -e "\033[1;36m1.\033[0m \033[1;32m更换为香港 HK nameserver\033[0m"
-  echo -e "\033[1;36m2.\033[0m \033[1;32m更换为新加坡 SG nameserver\033[0m"
+  echo -e "\033[1;36m1.\033[0m \033[1;32m更换为ALice香港 HK nameserver\033[0m"
+  echo -e "\033[1;36m2.\033[0m \033[1;32m更换为ALice新加坡 SG nameserver\033[0m"
   echo -e "\033[1;33m请输入数字 (1-2):\033[0m"
   read ns_choice
 
