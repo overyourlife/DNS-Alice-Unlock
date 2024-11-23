@@ -158,20 +158,57 @@ case $choice in
     echo -e "\033[31m备份文件 /etc/resolv.conf.bak 不存在，无法恢复！\033[0m"
   fi
   ;;
+  
 7)
-  echo -e "\033[1;34m检测流媒体解锁支持情况 (功能待实现)...\033[0m"
+  # 检测流媒体解锁支持情况
+  echo "检测流媒体解锁支持情况..."
+  bash <(curl -sL IP.Check.Place)
+  if [ $? -eq 0 ]; then
+    echo "流媒体解锁检测完成！"
+  else
+    echo "流媒体解锁检测失败，请检查网络连接或脚本 URL！"
+  fi
   ;;
 
 8)
-  # 检查端口 53 占用情况
-  check_and_release_port 53
+  # 检查端口 53 是否被占用
+  echo "检查端口 53 是否被占用..."
+  PORT_IN_USE=$(sudo netstat -tuln | grep ':53')
+  if [ -n "$PORT_IN_USE" ]; then
+    echo "端口 53 已被占用，检查是否为 systemd-resolved..."
+
+    # 检查 systemd-resolved 是否占用了 53 端口
+    SYSTEMD_RESOLVED=$(ps aux | grep 'systemd-resolved' | grep -v 'grep')
+
+    if [ -n "$SYSTEMD_RESOLVED" ]; then
+      echo "发现 systemd-resolved 占用 53 端口，正在停止并禁用 systemd-resolved 服务..."
+
+      # 停止并禁用 systemd-resolved 服务
+      sudo systemctl stop systemd-resolved
+      sudo systemctl disable systemd-resolved
+
+      # 删除 systemd-resolved 创建的 /etc/resolv.conf 并重新配置
+      sudo rm -f /etc/resolv.conf
+      echo "nameserver 127.0.0.1" | sudo tee /etc/resolv.conf > /dev/null
+      echo "/etc/resolv.conf 文件已更新为指向本地 DNS 解析。"
+    else
+      echo "系统未检测到 systemd-resolved 占用 53 端口，可能由其他进程占用。"
+    fi
+  else
+    echo "端口 53 未被占用，可以正常启动 dnsmasq。"
+  fi
   ;;
 
+
 9)
-  # 删除本脚本
-  echo "执行删除本脚本文件的操作..."
-  rm -- "$0"
-  echo -e "\033[1;32m脚本已成功删除！\033[0m"
+  # 卸载本脚本并删除本地文件
+  echo "正在卸载本脚本并删除本地文件..."
+  if [ -f "$SCRIPT_NAME" ]; then
+    rm -f "$SCRIPT_NAME"
+    echo "脚本文件已删除！"
+  else
+    echo "脚本文件不存在，无法删除！"
+  fi
   ;;
 
 10)
