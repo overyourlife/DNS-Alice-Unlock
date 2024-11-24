@@ -217,7 +217,7 @@ case $choice in
 7)
   # 检测流媒体解锁支持情况
   echo "检测流媒体解锁支持情况..."
-  bash <(curl -sL IP.Check.Place)
+  bash <(curl -L -s https://raw.githubusercontent.com/1-stream/RegionRestrictionCheck/main/check.sh)
   if [ $? -eq 0 ]; then
     echo "流媒体解锁检测完成！"
   else
