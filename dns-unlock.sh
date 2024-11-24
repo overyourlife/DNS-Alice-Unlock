@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_0.9.1"
+VERSION="V_0.9.2"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -90,6 +90,7 @@ case $main_choice in
   
   case $dnsmasq_choice in
    1)
+    1)
     # 安装并配置 dnsmasq
     echo "执行安装 dnsmasq 的相关操作..."
     
@@ -109,7 +110,7 @@ case $main_choice in
     fi
     echo -e "\033[1;32m配置文件已更新：$CONFIG_FILE\033[0m"
 
-     # 提示用户是否调整配置文件中的 IP
+# 提示用户是否调整配置文件中的 IP
     read -p "配置文件中 IP 为 154.12.177.22 和 157.20.104.47，是否调整？(回车默认Alice DNS，输入y调整自己的解锁IP): " adjust
     if [[ "$adjust" == "y" || "$adjust" == "Y" ]]; then
         read -p "请输入您的解锁IP: " unlock_ip
@@ -121,6 +122,23 @@ case $main_choice in
     else
         echo -e "\033[1;32m未调整配置文件中的 IP。\033[0m"
     fi
+
+    # 检查端口 53 占用情况
+    check_and_release_port 53
+
+    # 备份并更新 /etc/resolv.conf
+    set_and_lock_resolv_conf "127.0.0.1"
+
+    # 重启 dnsmasq 服务
+    echo -e "\033[1;34m重启 dnsmasq 服务...\033[0m"
+    systemctl restart dnsmasq && systemctl enable dnsmasq
+    if [ $? -eq 0 ]; then
+        echo -e "\033[1;32mdnsmasq 服务已成功启动并启用开机自启！\033[0m"
+    else
+        echo -e "\033[31m[错误] dnsmasq 服务启动失败，请检查配置！\033[0m"
+    fi
+    ;;
+    
   2)
     # 卸载 dnsmasq 并恢复默认配置
     echo "执行卸载 dnsmasq 的相关操作..."
