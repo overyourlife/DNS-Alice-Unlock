@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_0.8.2"
+VERSION="V_0.8.3"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -227,8 +227,9 @@ while true; do
   echo -e "\033[1;33m请选择要执行的操作：\033[0m"
   echo -e "\033[1;36m1.\033[0m \033[1;32m安装并配置 smartdns 分流\033[0m"
   echo -e "\033[1;36m2.\033[0m \033[1;32m重启 smartdns 服务\033[0m"
+  echo -e "\033[1;36m3.\033[0m \033[1;32m卸载 smartdns 并恢复默认 resolv.conf 配置\033[0m"
   echo -e "\033[1;36m0.\033[0m \033[1;31m返回上一级\033[0m"
-  echo -e "\n\033[1;33m请输入数字 (0-2):\033[0m"
+  echo -e "\n\033[1;33m请输入数字 (0-3):\033[0m"
   read smartdns_choice
 
   case $smartdns_choice in
@@ -323,16 +324,40 @@ while true; do
     fi
     ;;
 
-    0)
-      # 返回上一级
-      break
-      ;;
-    *)
-      echo -e "\033[31m[错误] 无效的选项！\033[0m"
-      ;;
-    esac
-  done
-  ;;
+ 3)
+    # 卸载 smartdns 并恢复默认 resolv.conf 配置
+    echo -e "\033[1;34m卸载 smartdns 并恢复默认 resolv.conf 配置...\033[0m"
+
+    # 卸载 smartdns
+    apt-get purge -y smartdns
+    if [ $? -eq 0 ]; then
+      echo -e "\033[1;32msmartdns 已成功卸载！\033[0m"
+    else
+      echo -e "\033[31m[错误] 卸载 smartdns 失败！\033[0m"
+      exit 1
+    fi
+
+    # 恢复默认 resolv.conf 配置
+    if [ -f /etc/resolv.conf.bak ]; then
+      echo -e "\033[1;34m恢复原始 /etc/resolv.conf 配置...\033[0m"
+      cp /etc/resolv.conf.bak /etc/resolv.conf
+      chattr -i /etc/resolv.conf
+      echo -e "\033[1;32m已恢复原始配置！\033[0m"
+    else
+      echo -e "\033[31m[错误] 找不到备份文件 /etc/resolv.conf.bak！\033[0m"
+    fi
+    ;;
+
+  0)
+    # 返回上一级
+    break
+    ;;
+
+  *)
+    echo -e "\033[31m[错误] 无效的选项！\033[0m"
+    ;;
+  esac
+done
 
 
 3)
