@@ -88,7 +88,6 @@ case $choice in
   
   case $dnsmasq_choice in
 
-case $choice in
 1)
   # 安装并配置 dnsmasq
   echo "执行安装 dnsmasq 的相关操作..."
