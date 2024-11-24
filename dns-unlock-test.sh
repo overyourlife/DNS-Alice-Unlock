@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_0.8.6"
+VERSION="V_0.8.7"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -64,7 +64,6 @@ echo -e "\033[1;34m======================================\033[0m"
 echo -e "\n"
 
 # 显示主菜单
-main_menu() {
 echo -e "\033[1;33m请选择要执行的操作：\033[0m"
 echo -e "\033[1;36m1.\033[0m \033[1;32mdnsmasq 分流配置\033[0m"
 echo -e "\033[1;36m2.\033[0m \033[1;32msmartdns 分流配置\033[0m"
@@ -77,10 +76,9 @@ echo -e "\n\033[1;33m请输入数字 (1-6):\033[0m"
 read main_choice
 
 case $main_choice in
-}
 1)
   # dnsmasq 分流配置子菜单
-while true; do
+  while true; do
   echo -e "\033[1;33m请选择要执行的操作：\033[0m"
   echo -e "\033[1;36m1.\033[0m \033[1;32m安装并配置 dnsmasq 分流\033[0m"
   echo -e "\033[1;36m2.\033[0m \033[1;32m卸载 dnsmasq 并恢复默认配置\033[0m"
@@ -142,8 +140,8 @@ while true; do
     echo -e "\033[1;33m请选择要更新的配置：\033[0m"
     echo -e "\033[1;36m1.\033[0m \033[1;32m更新为 HK 配置\033[0m"
     echo -e "\033[1;36m2.\033[0m \033[1;32m更新为 SG 配置\033[0m"
-    echo -e "\033[1;33m请输入数字 (1-2):\033[0m"
-    read config_choice
+    echo -e "\033[1;36m0.\033[0m \033[1;31m返回上一级\033[0m"
+    read update_choice
 
     # 根据选择进入下一步操作
     case $config_choice in
@@ -212,9 +210,12 @@ while true; do
     fi
     ;;
 
-  0) return ;;  # 返回主菜单
+    0)
+      break
+      ;;
+    
     *)
-      echo -e "\033[31m[错误] 无效的选项！\033[0m"
+      echo -e "\033[31m无效选择，请重新输入！\033[0m"
       ;;
     esac
   done
@@ -347,10 +348,11 @@ while true; do
     fi
     ;;
 
-  0) return ;;  # 返回主菜单
-
-  *)
-      echo -e "\033[31m[错误] 无效的选项！\033[0m"
+    0)
+      break
+      ;;
+    *)
+      echo -e "\033[31m无效选择，请重新输入！\033[0m"
       ;;
     esac
   done
@@ -398,10 +400,11 @@ while true; do
     echo -e "\033[1;32m已恢复原始配置！\033[0m"
     ;;
 
-  0) return ;;  # 返回主菜单
-      
+    0)
+      break
+      ;;
     *)
-      echo -e "\033[31m[错误] 无效的选项！\033[0m"
+      echo -e "\033[31m无效选择，请重新输入！\033[0m"
       ;;
     esac
   done
