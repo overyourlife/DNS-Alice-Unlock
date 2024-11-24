@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_0.6.6"
+VERSION="V_0.6.7"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -330,6 +330,16 @@ case $choice in
     fi
   else
     echo "端口 53 未被占用，可以继续配置！"
+  fi
+
+  # 检查 /etc/resolv.conf 文件是否已被锁定，如果已锁定则解锁
+  if lsattr /etc/resolv.conf | grep -q 'i'; then
+    echo "文件 /etc/resolv.conf 已被锁定，正在解锁..."
+    chattr -i /etc/resolv.conf
+    if [ $? -ne 0 ]; then
+      echo -e "\033[31m[错误] 解锁 /etc/resolv.conf 文件失败！\033[0m"
+      exit 1
+    fi
   fi
 
   # 备份 /etc/resolv.conf 文件
