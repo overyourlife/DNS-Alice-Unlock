@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_0.7.7"
+VERSION="V_0.7.8"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -272,6 +272,7 @@ while true; do
 
 3)
   # resolv 文件分流配置子菜单
+  while true; do
   echo -e "\033[1;33m请选择要执行的操作：\033[0m"
   echo -e "\033[1;36m1.\033[0m \033[1;32m解锁 /etc/resolv.conf 文件\033[0m"
   echo -e "\033[1;36m2.\033[0m \033[1;32m锁定 /etc/resolv.conf 文件\033[0m"
