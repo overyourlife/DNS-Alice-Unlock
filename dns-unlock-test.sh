@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_0.7.0"
+VERSION="V_0.7.1"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -63,23 +63,30 @@ echo -e "\033[1;36m     再次打开脚本 bash dns-unlock.sh  \033[0m"
 echo -e "\033[1;34m======================================\033[0m"
 echo -e "\n"
 
-# 显示菜单
+# 显示主菜单
 echo -e "\033[1;33m请选择要执行的操作：\033[0m"
-echo -e "\033[1;36m1.\033[0m \033[1;32m安装并配置 dnsmasq 分流\033[0m"
-echo -e "\033[1;36m2.\033[0m \033[1;32m卸载 dnsmasq 并恢复默认配置\033[0m"
-echo -e "\033[1;36m3.\033[0m \033[1;32m更新 dnsmasq 配置文件\033[0m"
-echo -e "\033[1;36m4.\033[0m \033[1;32m解锁 /etc/resolv.conf 文件\033[0m"
-echo -e "\033[1;36m5.\033[0m \033[1;32m锁定 /etc/resolv.conf 文件\033[0m"
-echo -e "\033[1;36m6.\033[0m \033[1;32m恢复原始 /etc/resolv.conf 配置\033[0m"
-echo -e "\033[1;36m7.\033[0m \033[1;32m检测流媒体解锁支持情况\033[0m"
-echo -e "\033[1;36m8.\033[0m \033[1;32m检查系统端口 53 占用情况\033[0m"
-echo -e "\033[1;36m9.\033[0m \033[1;32m删除本脚本文件\033[0m"
-echo -e "\033[1;36m10.\033[0m \033[1;32m一键更换 resolv.conf 中的 nameserver\033[0m"
-echo -e "\033[1;36m11.\033[0m 重启 dnsmasq 服务"
-echo -e "\033[1;36m12.\033[0m \033[1;32m安装并配置 smartdns 分流\033[0m"
-echo -e "\033[1;36m13.\033[0m \033[1;32m重启 smartdns 服务\033[0m"
-echo -e "\n\033[1;33m请输入数字 (1-13):\033[0m"
+echo -e "\033[1;36m1.\033[0m \033[1;32mdnsmasq 分流配置\033[0m"
+echo -e "\033[1;36m2.\033[0m \033[1;32msmartdns 分流配置\033[0m"
+echo -e "\033[1;36m3.\033[0m \033[1;32mresolv 文件分流配置\033[0m"
+echo -e "\033[1;36m4.\033[0m \033[1;32m检测流媒体解锁支持情况\033[0m"
+echo -e "\033[1;36m5.\033[0m \033[1;32m检查系统端口 53 占用情况\033[0m"
+echo -e "\033[1;36m6.\033[0m \033[1;32m删除脚本本地文件\033[0m"
+echo -e "\n\033[1;33m请输入数字 (1-6):\033[0m"
 read choice
+
+
+case $choice in
+1)
+  # dnsmasq 分流配置子菜单
+  echo -e "\033[1;33m请选择要执行的操作：\033[0m"
+  echo -e "\033[1;36m1.\033[0m \033[1;32m安装并配置 dnsmasq 分流\033[0m"
+  echo -e "\033[1;36m2.\033[0m \033[1;32m卸载 dnsmasq 并恢复默认配置\033[0m"
+  echo -e "\033[1;36m3.\033[0m \033[1;32m更新 dnsmasq 配置文件\033[0m"
+  echo -e "\033[1;36m4.\033[0m \033[1;32m重启 dnsmasq 服务\033[0m"
+  echo -e "\n\033[1;33m请输入数字 (1-4):\033[0m"
+  read dnsmasq_choice
+  
+  case $dnsmasq_choice in
 
 case $choice in
 1)
@@ -189,107 +196,7 @@ case $choice in
   fi
   ;;
 
-4)
-  # 解锁 /etc/resolv.conf
-  echo -e "\033[1;34m解锁 /etc/resolv.conf 文件...\033[0m"
-  chattr -i /etc/resolv.conf
-  echo -e "\033[1;32m/etc/resolv.conf 文件已解锁！\033[0m"
-  ;;
-
-5)
-  # 锁定 /etc/resolv.conf
-  echo -e "\033[1;34m锁定 /etc/resolv.conf 文件...\033[0m"
-  chattr +i /etc/resolv.conf
-  echo -e "\033[1;32m/etc/resolv.conf 文件已锁定！\033[0m"
-  ;;
-
-6)
-  # 恢复原始 /etc/resolv.conf 配置
-  echo -e "\033[1;34m恢复原始 /etc/resolv.conf 配置...\033[0m"
-  if [ -f /etc/resolv.conf.bak ]; then
-    mv /etc/resolv.conf.bak /etc/resolv.conf
-    echo -e "\033[1;32m/etc/resolv.conf 配置已恢复！\033[0m"
-  else
-    echo -e "\033[31m备份文件 /etc/resolv.conf.bak 不存在，无法恢复！\033[0m"
-  fi
-  ;;
-  
-7)
-  # 检测流媒体解锁支持情况
-  echo "检测流媒体解锁支持情况..."
-  bash <(curl -L -s https://raw.githubusercontent.com/1-stream/RegionRestrictionCheck/main/check.sh)
-  if [ $? -eq 0 ]; then
-    echo "流媒体解锁检测完成！"
-  else
-    echo "流媒体解锁检测失败，请检查网络连接或脚本 URL！"
-  fi
-  ;;
-
-8)
-  # 检查端口 53 是否被占用
-  echo "检查端口 53 是否被占用..."
-  PORT_IN_USE=$(sudo netstat -tuln | grep ':53')
-  if [ -n "$PORT_IN_USE" ]; then
-    echo "端口 53 已被占用，检查是否为 systemd-resolved..."
-
-    # 检查 systemd-resolved 是否占用了 53 端口
-    SYSTEMD_RESOLVED=$(ps aux | grep 'systemd-resolved' | grep -v 'grep')
-
-    if [ -n "$SYSTEMD_RESOLVED" ]; then
-      echo "发现 systemd-resolved 占用 53 端口，正在停止并禁用 systemd-resolved 服务..."
-
-      # 停止并禁用 systemd-resolved 服务
-      sudo systemctl stop systemd-resolved
-      sudo systemctl disable systemd-resolved
-
-      # 删除 systemd-resolved 创建的 /etc/resolv.conf 并重新配置
-      sudo rm -f /etc/resolv.conf
-      echo "nameserver 127.0.0.1" | sudo tee /etc/resolv.conf > /dev/null
-      echo "/etc/resolv.conf 文件已更新为指向本地 DNS 解析。"
-    else
-      echo "系统未检测到 systemd-resolved 占用 53 端口，可能由其他进程占用。"
-    fi
-  else
-    echo "端口 53 未被占用，可以正常启动 dnsmasq。"
-  fi
-  ;;
-
-
-9)
-  # 卸载本脚本并删除本地文件
-  echo "正在卸载本脚本并删除本地文件..."
-  if [ -f "$SCRIPT_NAME" ]; then
-    rm -f "$SCRIPT_NAME"
-    echo "脚本文件已删除！"
-  else
-    echo "脚本文件不存在，无法删除！"
-  fi
-  ;;
-
-10)
-  # 更换 resolv.conf 中的 nameserver
-  echo -e "\033[1;33m请选择要更换的 nameserver：\033[0m"
-  echo -e "\033[1;36m1.\033[0m \033[1;32m更换为 Alice 香港 HK nameserver\033[0m"
-  echo -e "\033[1;36m2.\033[0m \033[1;32m更换为 Alice 新加坡 SG nameserver\033[0m"
-  echo -e "\033[1;33m请输入数字 (1-2):\033[0m"
-  read ns_choice
-
-  case $ns_choice in
-  1)
-    set_and_lock_resolv_conf "154.12.177.22"
-    ;;
-
-  2)
-    set_and_lock_resolv_conf "157.20.104.47"
-    ;;
-
-  *)
-    echo -e "\033[31m无效选择，请输入 1 或 2！\033[0m"
-    ;;
-  esac
-  ;;
-
-11)
+  4)
   echo -e "\033[1;34m正在重启 dnsmasq 服务...\033[0m"
   systemctl restart dnsmasq
   if [ $? -eq 0 ]; then
@@ -299,8 +206,19 @@ case $choice in
   fi
   ;;
 
-12)
-  # 安装 smartdns
+
+2)
+  # smartdns 分流配置子菜单
+  echo -e "\033[1;33m请选择要执行的操作：\033[0m"
+  echo -e "\033[1;36m1.\033[0m \033[1;32m安装并配置 smartdns 分流\033[0m"
+  echo -e "\033[1;36m2.\033[0m \033[1;32m重启 smartdns 服务\033[0m"
+  echo -e "\n\033[1;33m请输入数字 (1-2):\033[0m"
+  read smartdns_choice
+  
+  case $smartdns_choice in
+
+  1)
+  # 安装并配置 smartdns
   echo "安装 smartdns..."
   apt update && apt install -y smartdns
   if [ $? -ne 0 ]; then
@@ -379,7 +297,7 @@ case $choice in
   echo -e "\033[1;32msmartdns 配置已完成，服务已启动并设置为开机启动！\033[0m"
   ;;
 
-13)
+2)  
   # 重启 smartdns 服务
   echo "正在重启 smartdns 服务..."
   systemctl restart smartdns
@@ -390,8 +308,117 @@ case $choice in
   echo -e "\033[1;32msmartdns 服务已成功重启！\033[0m"
   ;;
 
+3)
+  # resolv 文件分流配置子菜单
+  echo -e "\033[1;33m请选择要执行的操作：\033[0m"
+  echo -e "\033[1;36m1.\033[0m \033[1;32m解锁 /etc/resolv.conf 文件\033[0m"
+  echo -e "\033[1;36m2.\033[0m \033[1;32m锁定 /etc/resolv.conf 文件\033[0m"
+  echo -e "\033[1;36m3.\033[0m \033[1;32m一键更换 resolv.conf 中的 nameserver\033[0m"
+  echo -e "\033[1;36m4.\033[0m \033[1;32m恢复原始 /etc/resolv.conf 配置\033[0m"
+  echo -e "\n\033[1;33m请输入数字 (1-4):\033[0m"
+  read resolv_choice
+  
+  case $resolv_choice in
+  1)
+  # 解锁 /etc/resolv.conf
+  echo -e "\033[1;34m解锁 /etc/resolv.conf 文件...\033[0m"
+  chattr -i /etc/resolv.conf
+  echo -e "\033[1;32m/etc/resolv.conf 文件已解锁！\033[0m"
+  ;;
+
+  2) 
+  # 锁定 /etc/resolv.conf
+  echo -e "\033[1;34m锁定 /etc/resolv.conf 文件...\033[0m"
+  chattr +i /etc/resolv.conf
+  echo -e "\033[1;32m/etc/resolv.conf 文件已锁定！\033[0m"
+  ;;  
+  
+  3) 
+  # 更换 resolv.conf 中的 nameserver
+  echo -e "\033[1;33m请选择要更换的 nameserver：\033[0m"
+  echo -e "\033[1;36m1.\033[0m \033[1;32m更换为 Alice 香港 HK nameserver\033[0m"
+  echo -e "\033[1;36m2.\033[0m \033[1;32m更换为 Alice 新加坡 SG nameserver\033[0m"
+  echo -e "\033[1;33m请输入数字 (1-2):\033[0m"
+  read ns_choice
+
+  case $ns_choice in
+  1)
+    set_and_lock_resolv_conf "154.12.177.22"
+    ;;
+
+  2)
+    set_and_lock_resolv_conf "157.20.104.47"
+    ;;
+
+  *)
+    echo -e "\033[31m无效选择，请输入 1 或 2！\033[0m"
+    ;;
+  esac
+  ;;
+ 
+  4) 
+  # 恢复原始 /etc/resolv.conf 配置
+  echo -e "\033[1;34m恢复原始 /etc/resolv.conf 配置...\033[0m"
+  if [ -f /etc/resolv.conf.bak ]; then
+    mv /etc/resolv.conf.bak /etc/resolv.conf
+    echo -e "\033[1;32m/etc/resolv.conf 配置已恢复！\033[0m"
+  else
+    echo -e "\033[31m备份文件 /etc/resolv.conf.bak 不存在，无法恢复！\033[0m"
+  fi
+  ;;
+  
+4)
+  # 检测流媒体解锁支持情况
+  echo "检测流媒体解锁支持情况..."
+  bash <(curl -L -s https://raw.githubusercontent.com/1-stream/RegionRestrictionCheck/main/check.sh)
+  if [ $? -eq 0 ]; then
+    echo "流媒体解锁检测完成！"
+  else
+    echo "流媒体解锁检测失败，请检查网络连接或脚本 URL！"
+  fi
+  ;;
+
+5)
+  # 检查端口 53 是否被占用
+  echo "检查端口 53 是否被占用..."
+  PORT_IN_USE=$(sudo netstat -tuln | grep ':53')
+  if [ -n "$PORT_IN_USE" ]; then
+    echo "端口 53 已被占用，检查是否为 systemd-resolved..."
+
+    # 检查 systemd-resolved 是否占用了 53 端口
+    SYSTEMD_RESOLVED=$(ps aux | grep 'systemd-resolved' | grep -v 'grep')
+
+    if [ -n "$SYSTEMD_RESOLVED" ]; then
+      echo "发现 systemd-resolved 占用 53 端口，正在停止并禁用 systemd-resolved 服务..."
+
+      # 停止并禁用 systemd-resolved 服务
+      sudo systemctl stop systemd-resolved
+      sudo systemctl disable systemd-resolved
+
+      # 删除 systemd-resolved 创建的 /etc/resolv.conf 并重新配置
+      sudo rm -f /etc/resolv.conf
+      echo "nameserver 127.0.0.1" | sudo tee /etc/resolv.conf > /dev/null
+      echo "/etc/resolv.conf 文件已更新为指向本地 DNS 解析。"
+    else
+      echo "系统未检测到 systemd-resolved 占用 53 端口，可能由其他进程占用。"
+    fi
+  else
+    echo "端口 53 未被占用，可以正常启动 dnsmasq。"
+  fi
+  ;;
+
+6)
+  # 卸载本脚本并删除本地文件
+  echo "正在卸载本脚本并删除本地文件..."
+  if [ -f "$SCRIPT_NAME" ]; then
+    rm -f "$SCRIPT_NAME"
+    echo "脚本文件已删除！"
+  else
+    echo "脚本文件不存在，无法删除！"
+  fi
+  ;;
 
 *)
-  echo -e "\033[31m无效选择，请选择 1 到 13 之间的数字。\033[0m"
+  echo -e "\033[31m无效选择，请选择 1 到 6 之间的数字。\033[0m"
   ;;
 esac
