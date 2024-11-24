@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_0.8.7"
+VERSION="V_0.8.8"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -84,7 +84,7 @@ case $main_choice in
   echo -e "\033[1;36m2.\033[0m \033[1;32m卸载 dnsmasq 并恢复默认配置\033[0m"
   echo -e "\033[1;36m3.\033[0m \033[1;32m更新 dnsmasq 配置文件\033[0m"
   echo -e "\033[1;36m4.\033[0m \033[1;32m重启 dnsmasq 服务\033[0m"
-  echo -e "\033[1;36m0.\033[0m \033[1;31m返回上一级\033[0m"
+  echo -e "\033[1;36m0.\033[0m \033[1;31m退出脚本\033[0m"
   echo -e "\n\033[1;33m请输入数字 (0-4):\033[0m"
   read dnsmasq_choice
   
@@ -140,7 +140,7 @@ case $main_choice in
     echo -e "\033[1;33m请选择要更新的配置：\033[0m"
     echo -e "\033[1;36m1.\033[0m \033[1;32m更新为 HK 配置\033[0m"
     echo -e "\033[1;36m2.\033[0m \033[1;32m更新为 SG 配置\033[0m"
-    echo -e "\033[1;36m0.\033[0m \033[1;31m返回上一级\033[0m"
+    echo -e "\033[1;36m0.\033[0m \033[1;31m退出脚本\033[0m"
     read update_choice
 
     # 根据选择进入下一步操作
@@ -228,7 +228,7 @@ case $main_choice in
   echo -e "\033[1;36m1.\033[0m \033[1;32m安装并配置 smartdns 分流\033[0m"
   echo -e "\033[1;36m2.\033[0m \033[1;32m重启 smartdns 服务\033[0m"
   echo -e "\033[1;36m3.\033[0m \033[1;32m卸载 smartdns 并恢复默认 resolv.conf 配置\033[0m"
-  echo -e "\033[1;36m0.\033[0m \033[1;31m返回上一级\033[0m"
+  echo -e "\033[1;36m0.\033[0m \033[1;31m退出脚本\033[0m"
   echo -e "\n\033[1;33m请输入数字 (0-3):\033[0m"
   read smartdns_choice
 
@@ -366,7 +366,7 @@ case $main_choice in
   echo -e "\033[1;36m2.\033[0m \033[1;32m锁定 /etc/resolv.conf 文件\033[0m"
   echo -e "\033[1;36m3.\033[0m \033[1;32m一键更换 resolv.conf 中的 nameserver\033[0m"
   echo -e "\033[1;36m4.\033[0m \033[1;32m恢复原始 /etc/resolv.conf 配置\033[0m"
-  echo -e "\033[1;36m0.\033[0m \033[1;31m返回上一级\033[0m"
+  echo -e "\033[1;36m0.\033[0m \033[1;31m退出脚本\033[0m"
   echo -e "\n\033[1;33m请输入数字 (0-4):\033[0m"
   read resolv_choice
 
