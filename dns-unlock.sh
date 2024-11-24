@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_0.6.7"
+VERSION="V_0.6.8"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -76,7 +76,8 @@ echo -e "\033[1;36m9.\033[0m \033[1;32m删除本脚本文件\033[0m"
 echo -e "\033[1;36m10.\033[0m \033[1;32m一键更换 resolv.conf 中的 nameserver\033[0m"
 echo -e "\033[1;36m11.\033[0m 重启 dnsmasq 服务"
 echo -e "\033[1;36m12.\033[0m \033[1;32m安装并配置 smartdns 分流（暂未上线）\033[0m"
-echo -e "\n\033[1;33m请输入数字 (1-12):\033[0m"
+echo -e "\033[1;36m13.\033[0m \033[1;32m重启 smartdns 服务\033[0m"
+echo -e "\n\033[1;33m请输入数字 (1-13):\033[0m"
 read choice
 
 case $choice in
@@ -377,7 +378,19 @@ case $choice in
   echo -e "\033[1;32msmartdns 配置已完成，服务已启动并设置为开机启动！\033[0m"
   ;;
 
+13)
+  # 重启 smartdns 服务
+  echo "正在重启 smartdns 服务..."
+  systemctl restart smartdns
+  if [ $? -ne 0 ]; then
+    echo -e "\033[31m[错误] smartdns 服务重启失败！\033[0m"
+    exit 1
+  fi
+  echo -e "\033[1;32msmartdns 服务已成功重启！\033[0m"
+  ;;
+
+
 *)
-  echo -e "\033[31m无效选择，请选择 1 到 12 之间的数字。\033[0m"
+  echo -e "\033[31m无效选择，请选择 1 到 13 之间的数字。\033[0m"
   ;;
 esac
