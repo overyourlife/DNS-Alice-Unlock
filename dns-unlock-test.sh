@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_0.8.0"
+VERSION="V_0.8.1"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -233,19 +233,84 @@ while true; do
 
   case $smartdns_choice in
   1)
-    # 安装并配置 smartdns
-    echo -e "\033[1;34m安装 smartdns...\033[0m"
-    apt update && apt install -y smartdns
+# 安装 smartdns
+  echo "安装 smartdns..."
+  apt update && apt install -y smartdns
+  if [ $? -ne 0 ]; then
+    echo -e "\033[31m[错误] smartdns 安装失败，请检查系统环境！\033[0m"
+    exit 1
+  fi
+
+  # 下载 smartdns 配置文件
+  echo "下载 smartdns 配置文件..."
+  curl -o /etc/smartdns/smartdns.conf https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/smartdns.conf
+  if [ $? -ne 0 ]; then
+    echo -e "\033[31m[错误] 配置文件下载失败！\033[0m"
+    exit 1
+  fi
+
+  # 检查端口 53 是否被占用
+  PORT_IN_USE=$(sudo netstat -tuln | grep ':53')
+  if [ -n "$PORT_IN_USE" ]; then
+    echo "端口 53 已被占用，检查是否为 systemd-resolved..."
+    SYSTEMD_RESOLVED=$(ps aux | grep 'systemd-resolved' | grep -v 'grep')
+    if [ -n "$SYSTEMD_RESOLVED" ]; then
+      echo "systemd-resolved 正在占用端口 53，停止 systemd-resolved 服务..."
+      systemctl stop systemd-resolved
+      systemctl disable systemd-resolved
+    else
+      echo "其他进程占用端口 53，停止相关服务..."
+      sudo systemctl stop dnsmasq
+      sudo systemctl disable dnsmasq
+    fi
+  else
+    echo "端口 53 未被占用，可以继续配置！"
+  fi
+
+  # 检查 /etc/resolv.conf 文件是否已被锁定，如果已锁定则解锁
+  if lsattr /etc/resolv.conf | grep -q 'i'; then
+    echo "文件 /etc/resolv.conf 已被锁定，正在解锁..."
+    chattr -i /etc/resolv.conf
     if [ $? -ne 0 ]; then
-      echo -e "\033[31m[错误] smartdns 安装失败！\033[0m"
+      echo -e "\033[31m[错误] 解锁 /etc/resolv.conf 文件失败！\033[0m"
       exit 1
     fi
+  fi
 
-    # 配置 smartdns
-    curl -o /etc/smartdns/smartdns.conf "https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/main/smartdns.conf"
-    systemctl restart smartdns
-    echo -e "\033[1;32msmartdns 配置成功，服务已启动！\033[0m"
-    ;;
+  # 备份 /etc/resolv.conf 文件
+  echo "备份 /etc/resolv.conf 文件..."
+  cp /etc/resolv.conf /etc/resolv.conf.bak
+  if [ $? -ne 0 ]; then
+    echo -e "\033[31m[错误] /etc/resolv.conf 备份失败！\033[0m"
+    exit 1
+  fi
+
+  # 修改 /etc/resolv.conf 中的 nameserver 为 127.0.0.1
+  echo "修改 /etc/resolv.conf 文件中的 nameserver 为 127.0.0.1..."
+  sed -i 's/nameserver .*/nameserver 127.0.0.1/' /etc/resolv.conf
+  if [ $? -ne 0 ]; then
+    echo -e "\033[31m[错误] 修改 /etc/resolv.conf 文件失败！\033[0m"
+    exit 1
+  fi
+
+  # 锁定 /etc/resolv.conf 文件
+  echo "锁定 /etc/resolv.conf 文件..."
+  chattr +i /etc/resolv.conf
+  if [ $? -ne 0 ]; then
+    echo -e "\033[31m[错误] 锁定 /etc/resolv.conf 文件失败！\033[0m"
+    exit 1
+  fi
+
+  # 启动 smartdns 服务并设置为开机启动
+  echo "启动 smartdns 并设置为开机启动..."
+  systemctl restart smartdns && systemctl enable smartdns
+  if [ $? -ne 0 ]; then
+    echo -e "\033[31m[错误] smartdns 启动失败！\033[0m"
+    exit 1
+  fi
+
+  echo -e "\033[1;32msmartdns 配置已完成，服务已启动并设置为开机启动！\033[0m"
+  ;;
 
   2)
     # 重启 smartdns 服务
