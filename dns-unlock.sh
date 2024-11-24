@@ -74,6 +74,7 @@ echo -e "\033[1;36m7.\033[0m \033[1;32m检测流媒体解锁支持情况\033[0m"
 echo -e "\033[1;36m8.\033[0m \033[1;32m检查系统端口 53 占用情况\033[0m"
 echo -e "\033[1;36m9.\033[0m \033[1;32m删除本脚本文件\033[0m"
 echo -e "\033[1;36m10.\033[0m \033[1;32m一键更换 resolv.conf 中的 nameserver\033[0m"
+echo -e "\033[1;36m11.\033[0m 重启 dnsmasq 服务"
 echo -e "\n\033[1;33m请输入数字 (1-10):\033[0m"
 read choice
 
@@ -285,8 +286,16 @@ case $choice in
   esac
   ;;
 
+11)
+  echo -e "\033[1;34m正在重启 dnsmasq 服务...\033[0m"
+  systemctl restart dnsmasq
+  if [ $? -eq 0 ]; then
+    echo -e "\033[1;32mdnsmasq 服务已成功重启！\033[0m"
+  else
+    echo -e "\033[31m[错误] dnsmasq 重启失败！\033[0m"
+  fi
+  ;;
 *)
-  # 处理无效输入
-  echo -e "\033[31m无效选择，请输入 1-10 之间的数字！\033[0m"
+  echo -e "\033[31m无效选择，请选择 1 到 11 之间的数字。\033[0m"
   ;;
 esac
