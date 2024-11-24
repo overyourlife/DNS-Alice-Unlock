@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_0.7.4"
+VERSION="V_0.7.5"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -71,18 +71,21 @@ echo -e "\033[1;36m3.\033[0m \033[1;32mresolv 文件分流配置\033[0m"
 echo -e "\033[1;36m4.\033[0m \033[1;32m检测流媒体解锁支持情况\033[0m"
 echo -e "\033[1;36m5.\033[0m \033[1;32m检查系统端口 53 占用情况\033[0m"
 echo -e "\033[1;36m6.\033[0m \033[1;32m删除脚本本地文件\033[0m"
+echo -e "\033[1;36m0.\033[0m \033[1;31m退出\033[0m"
 echo -e "\n\033[1;33m请输入数字 (1-6):\033[0m"
-read choice
+read main_choice
 
-case $choice in
+case $main_choice in
 1)
   # dnsmasq 分流配置子菜单
+while true; do
   echo -e "\033[1;33m请选择要执行的操作：\033[0m"
   echo -e "\033[1;36m1.\033[0m \033[1;32m安装并配置 dnsmasq 分流\033[0m"
   echo -e "\033[1;36m2.\033[0m \033[1;32m卸载 dnsmasq 并恢复默认配置\033[0m"
   echo -e "\033[1;36m3.\033[0m \033[1;32m更新 dnsmasq 配置文件\033[0m"
   echo -e "\033[1;36m4.\033[0m \033[1;32m重启 dnsmasq 服务\033[0m"
-  echo -e "\n\033[1;33m请输入数字 (1-4):\033[0m"
+  echo -e "\033[1;36m0.\033[0m \033[1;31m返回上一级\033[0m"
+  echo -e "\n\033[1;33m请输入数字 (0-4):\033[0m"
   read dnsmasq_choice
   
   case $dnsmasq_choice in
@@ -214,12 +217,17 @@ case $choice in
   esac
   ;;
 
+  0)
+        break
+        ;;
+
 2)
   # smartdns 分流配置子菜单
   echo -e "\033[1;33m请选择要执行的操作：\033[0m"
   echo -e "\033[1;36m1.\033[0m \033[1;32m安装并配置 smartdns 分流\033[0m"
   echo -e "\033[1;36m2.\033[0m \033[1;32m重启 smartdns 服务\033[0m"
-  echo -e "\n\033[1;33m请输入数字 (1-2):\033[0m"
+  echo -e "\033[1;36m0.\033[0m \033[1;31m返回上一级\033[0m"
+  echo -e "\n\033[1;33m请输入数字 (0-2):\033[0m"
   read smartdns_choice
 
   case $smartdns_choice in
@@ -249,12 +257,17 @@ case $choice in
     fi
     ;;
 
-  *)
-    echo -e "\033[31m[错误] 无效的选项！\033[0m"
-    exit 1
-    ;;
-  esac
+    0)
+      break
+      ;;
+
+    *)
+      echo -e "\033[31m[错误] 无效的选项！\033[0m"
+      ;;
+    esac
+  done
   ;;
+
 
 3)
   # resolv 文件分流配置子菜单
@@ -263,7 +276,8 @@ case $choice in
   echo -e "\033[1;36m2.\033[0m \033[1;32m锁定 /etc/resolv.conf 文件\033[0m"
   echo -e "\033[1;36m3.\033[0m \033[1;32m一键更换 resolv.conf 中的 nameserver\033[0m"
   echo -e "\033[1;36m4.\033[0m \033[1;32m恢复原始 /etc/resolv.conf 配置\033[0m"
-  echo -e "\n\033[1;33m请输入数字 (1-4):\033[0m"
+  echo -e "\033[1;36m0.\033[0m \033[1;31m返回上一级\033[0m"
+  echo -e "\n\033[1;33m请输入数字 (0-4):\033[0m"
   read resolv_choice
 
   case $resolv_choice in
@@ -296,11 +310,15 @@ case $choice in
     echo -e "\033[1;32m已恢复原始配置！\033[0m"
     ;;
 
-  *)
-    echo -e "\033[31m[错误] 无效的选项！\033[0m"
-    exit 1
-    ;;
-  esac
+    0)
+      break
+      ;;
+
+    *)
+      echo -e "\033[31m[错误] 无效的选项！\033[0m"
+      ;;
+    esac
+  done
   ;;
 
 4)
