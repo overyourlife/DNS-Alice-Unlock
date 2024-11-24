@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_0.9.3"
+VERSION="V_0.9.4"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -89,7 +89,6 @@ case $main_choice in
   read dnsmasq_choice
   
   case $dnsmasq_choice in
-   1)
     1)
     # 安装并配置 dnsmasq
     echo "执行安装 dnsmasq 的相关操作..."
