@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_0.9.5"
+VERSION="V_0.9.6"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -468,16 +468,16 @@ case $main_choice in
     echo -e "\033[1;33m正在下载并更新脚本...\033[0m"
     
     # 下载并替换当前脚本
-    curl -o /path/to/your/script/dns-unlock.sh https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/dns-unlock.sh
+    curl -o /root/dns-unlock.sh https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/dns-unlock.sh
     if [ $? -eq 0 ]; then
       echo -e "\033[1;32m脚本已成功更新为版本 $REMOTE_VERSION\033[0m"
       
       # 设置脚本可执行权限
-      chmod +x /path/to/your/script/dns-unlock.sh
+      chmod +x /root/dns-unlock.sh
 
       # 重新执行更新后的脚本
       echo -e "\033[1;34m重新启动脚本...\033[0m"
-      /path/to/your/script/dns-unlock.sh
+      /root/dns-unlock.sh
       exit 0
     else
       echo -e "\033[31m[错误] 下载新脚本失败，请检查网络连接！\033[0m"
