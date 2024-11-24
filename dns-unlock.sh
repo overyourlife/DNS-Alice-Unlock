@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_0.9.0"
+VERSION="V_0.9.1"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -109,7 +109,7 @@ case $main_choice in
     fi
     echo -e "\033[1;32m配置文件已更新：$CONFIG_FILE\033[0m"
 
-# 提示用户是否调整配置文件中的 IP
+     # 提示用户是否调整配置文件中的 IP
     read -p "配置文件中 IP 为 154.12.177.22 和 157.20.104.47，是否调整？(回车默认Alice DNS，输入y调整自己的解锁IP): " adjust
     if [[ "$adjust" == "y" || "$adjust" == "Y" ]]; then
         read -p "请输入您的解锁IP: " unlock_ip
