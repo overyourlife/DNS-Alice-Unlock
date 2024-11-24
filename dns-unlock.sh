@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_0.9.9"
+VERSION="V_1.0.0"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -15,15 +15,12 @@ SCRIPT_PATH="/root/$SCRIPT_NAME"
 SYMLINK_PATH="/usr/local/bin/ddns"
 AUTHOR="Jimmydada"
 
-# 检查并创建 ddns 快捷命令（符号链接）
+# 函数：首次运行时创建快捷命令
 create_symlink() {
   if [ ! -f "$SYMLINK_PATH" ]; then
-    echo -e "\033[1;32m首次运行，创建快捷命令 ddns...\033[0m"
+    # 仅在首次运行时创建快捷命令
     sudo ln -sf "$SCRIPT_PATH" "$SYMLINK_PATH"
     sudo chmod +x "$SYMLINK_PATH"
-    echo -e "\033[1;32m快捷命令 ddns 创建成功！\033[0m"
-  else
-    echo -e "\033[1;33m快捷命令 ddns 已存在，跳过创建...\033[0m"
   fi
 }
 
