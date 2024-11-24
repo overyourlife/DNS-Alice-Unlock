@@ -210,16 +210,16 @@ while true; do
     fi
     ;;
 
-  *)
-    echo -e "\033[31m[错误] 无效的选项！\033[0m"
-    exit 1
-    ;;
-  esac
-  ;;
+    0)
+      break
+      ;;
 
-  0)
-        break
-        ;;
+    *)
+      echo -e "\033[31m[错误] 无效的选项！\033[0m"
+      ;;
+    esac
+  done
+  ;;
 
 2)
   # smartdns 分流配置子菜单
