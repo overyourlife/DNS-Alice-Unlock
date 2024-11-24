@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_0.6.4"
+VERSION="V_0.6.5"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -75,7 +75,7 @@ echo -e "\033[1;36m8.\033[0m \033[1;32m检查系统端口 53 占用情况\033[0m
 echo -e "\033[1;36m9.\033[0m \033[1;32m删除本脚本文件\033[0m"
 echo -e "\033[1;36m10.\033[0m \033[1;32m一键更换 resolv.conf 中的 nameserver\033[0m"
 echo -e "\033[1;36m11.\033[0m 重启 dnsmasq 服务"
-echo -e "\n\033[1;33m请输入数字 (1-10):\033[0m"
+echo -e "\n\033[1;33m请输入数字 (1-11):\033[0m"
 read choice
 
 case $choice in
