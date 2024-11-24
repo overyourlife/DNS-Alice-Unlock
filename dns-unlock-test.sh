@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_0.8.1"
+VERSION="V_0.8.2"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -381,6 +381,7 @@ while true; do
       # 返回上一级
       break
       ;;
+      
     *)
       echo -e "\033[31m[错误] 无效的选项！\033[0m"
       ;;
@@ -411,9 +412,13 @@ while true; do
   echo -e "\033[1;32m脚本已成功删除！\033[0m"
   ;;
 
+0)
+  echo -e "\033[1;31m退出脚本...\033[0m"
+  exit 0
+  ;;
+
 *)
   echo -e "\033[31m[错误] 无效的选项！\033[0m"
-  exit 1
   ;;
 esac
 
