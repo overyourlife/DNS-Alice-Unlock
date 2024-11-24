@@ -15,12 +15,15 @@ SCRIPT_PATH="/root/$SCRIPT_NAME"
 SYMLINK_PATH="/usr/local/bin/ddns"
 AUTHOR="Jimmydada"
 
-# 函数：首次运行时创建快捷命令
+# 检查并创建 ddns 快捷命令（符号链接）
 create_symlink() {
   if [ ! -f "$SYMLINK_PATH" ]; then
-    # 仅在首次运行时创建快捷命令
+    echo -e "\033[1;32m首次运行，创建快捷命令 ddns...\033[0m"
     sudo ln -sf "$SCRIPT_PATH" "$SYMLINK_PATH"
     sudo chmod +x "$SYMLINK_PATH"
+    echo -e "\033[1;32m快捷命令 ddns 创建成功！\033[0m"
+  else
+    echo -e "\033[1;33m快捷指令 ddns 快速进入设置\033[0m"
   fi
 }
 
