@@ -354,11 +354,11 @@ while true; do
     ;;
 
   *)
-    echo -e "\033[31m[错误] 无效的选项！\033[0m"
-    ;;
-  esac
-done
-
+      echo -e "\033[31m[错误] 无效的选项！\033[0m"
+      ;;
+    esac
+  done
+  ;;
 
 3)
   # resolv 文件分流配置子菜单
