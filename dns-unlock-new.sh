@@ -110,7 +110,7 @@ case $main_choice in
     echo -e "\033[1;32m配置文件已更新：$CONFIG_FILE\033[0m"
 
 # 提示用户是否调整配置文件中的 IP
-    read -p "配置文件中 IP 为 154.12.177.22 和 157.20.104.47，是否调整？(默认否，输入y调整): " adjust
+    read -p "配置文件中 IP 为 154.12.177.22 和 157.20.104.47，是否调整？(回车默认Alice DNS，输入y调整自己的解锁IP): " adjust
     if [[ "$adjust" == "y" || "$adjust" == "Y" ]]; then
         read -p "请输入您的解锁IP: " unlock_ip
         # 修改配置文件中的 IP 地址
