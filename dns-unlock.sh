@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_0.9.4"
+VERSION="V_0.9.5"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -71,8 +71,9 @@ echo -e "\033[1;36m3.\033[0m \033[1;32mresolv 文件分流配置\033[0m"
 echo -e "\033[1;36m4.\033[0m \033[1;32m检测流媒体解锁支持情况\033[0m"
 echo -e "\033[1;36m5.\033[0m \033[1;32m检查系统端口 53 占用情况\033[0m"
 echo -e "\033[1;36m6.\033[0m \033[1;32m删除脚本本地文件\033[0m"
+echo -e "\033[1;36m7.\033[0m \033[1;32m更新脚本\033[0m"
 echo -e "\033[1;36m0.\033[0m \033[1;31m退出\033[0m"
-echo -e "\n\033[1;33m请输入数字 (1-6):\033[0m"
+echo -e "\n\033[1;33m请输入数字 (0-7):\033[0m"
 read main_choice
 
 case $main_choice in
@@ -448,8 +449,44 @@ case $main_choice in
   exit 0
   ;;
 
+7)
+  # 更新脚本
+  echo -e "\033[1;34m检查远程脚本版本...\033[0m"
+  
+  # 获取远程脚本的版本号
+  REMOTE_VERSION=$(curl -s https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/dns-unlock.sh | grep "VERSION=" | cut -d '"' -f 2)
+  
+  # 当前脚本的版本号
+  CURRENT_VERSION="V_0.9.4"
+  
+  echo -e "\033[1;33m当前版本：$CURRENT_VERSION\033[0m"
+  echo -e "\033[1;33m远程版本：$REMOTE_VERSION\033[0m"
+  
+  # 比较版本号
+  if [ "$REMOTE_VERSION" \> "$CURRENT_VERSION" ]; then
+    echo -e "\033[1;32m检测到新版本：$REMOTE_VERSION\033[0m"
+    echo -e "\033[1;33m正在下载并更新脚本...\033[0m"
+    
+    # 下载并替换当前脚本
+    curl -o /path/to/your/script/dns-unlock.sh https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/dns-unlock.sh
+    if [ $? -eq 0 ]; then
+      echo -e "\033[1;32m脚本已成功更新为版本 $REMOTE_VERSION\033[0m"
+      
+      # 设置脚本可执行权限
+      chmod +x /path/to/your/script/dns-unlock.sh
+
+      # 重新执行更新后的脚本
+      echo -e "\033[1;34m重新启动脚本...\033[0m"
+      /path/to/your/script/dns-unlock.sh
+      exit 0
+    else
+      echo -e "\033[31m[错误] 下载新脚本失败，请检查网络连接！\033[0m"
+    fi
+  else
+    echo -e "\033[1;32m当前已经是最新版本，无需更新！\033[0m"
+  fi
+  ;;
 *)
-  echo -e "\033[31m[错误] 无效的选项！\033[0m"
+  echo -e "\033[31m无效选择，请重新输入！\033[0m"
   ;;
 esac
-
