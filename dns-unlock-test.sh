@@ -161,8 +161,40 @@ case $choice in
       echo -e "\033[31m[错误] 无效的选项！\033[0m"
       exit 1
       ;;
-    esac
-    ;;
+  esac
+
+  echo -e "\033[1;34m开始更新为 $REGION 配置...\033[0m"
+
+  # 备份旧的配置文件
+  if [ -f /etc/dnsmasq.conf ]; then
+    echo -e "\033[1;33m备份原有配置文件为 /etc/dnsmasq.conf.bak...\033[0m"
+    mv /etc/dnsmasq.conf /etc/dnsmasq.conf.bak
+  fi
+
+  # 下载新的配置文件
+  echo -e "\033[1;33m下载新的 $REGION 配置文件...\033[0m"
+  curl -o "/etc/$TARGET_FILE" "$CONFIG_URL"
+  if [ $? -eq 0 ]; then
+    mv "/etc/$TARGET_FILE" /etc/dnsmasq.conf
+    echo -e "\033[1;32m$REGION 配置文件更新成功！\033[0m"
+    
+    # 重启 dnsmasq 服务
+    echo -e "\033[1;33m重启 dnsmasq 服务...\033[0m"
+    systemctl restart dnsmasq
+    if [ $? -eq 0 ]; then
+      echo -e "\033[1;32mdnsmasq 服务重启成功！\033[0m"
+    else
+      echo -e "\033[31m重启 dnsmasq 服务失败，请检查日志！\033[0m"
+    fi
+  else
+    echo -e "\033[31m$REGION 配置文件下载失败，请检查网络连接！\033[0m"
+    # 恢复原始配置（如果有备份）
+    if [ -f /etc/dnsmasq.conf.bak ]; then
+      echo -e "\033[1;33m恢复原始配置文件...\033[0m"
+      mv /etc/dnsmasq.conf.bak /etc/dnsmasq.conf
+    fi
+  fi
+  ;;
 
   4)
     # 重启 dnsmasq 服务
