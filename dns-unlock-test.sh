@@ -325,12 +325,12 @@ while true; do
 
 4)
   # 检测流媒体解锁支持情况
-  echo -e "\033[1;34m检测流媒体解锁支持情况...\033[0m"
-  curl -I https://www.netflix.com > /dev/null 2>&1
+  echo "检测流媒体解锁支持情况..."
+  bash <(curl -L -s https://raw.githubusercontent.com/1-stream/RegionRestrictionCheck/main/check.sh)
   if [ $? -eq 0 ]; then
-    echo -e "\033[1;32m流媒体解锁支持：Netflix 解锁成功！\033[0m"
+    echo "流媒体解锁检测完成！"
   else
-    echo -e "\033[31m流媒体解锁支持：Netflix 解锁失败！\033[0m"
+    echo "流媒体解锁检测失败，请检查网络连接或脚本 URL！"
   fi
   ;;
 
