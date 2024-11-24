@@ -223,6 +223,7 @@ while true; do
 
 2)
   # smartdns 分流配置子菜单
+  while true; do
   echo -e "\033[1;33m请选择要执行的操作：\033[0m"
   echo -e "\033[1;36m1.\033[0m \033[1;32m安装并配置 smartdns 分流\033[0m"
   echo -e "\033[1;36m2.\033[0m \033[1;32m重启 smartdns 服务\033[0m"
