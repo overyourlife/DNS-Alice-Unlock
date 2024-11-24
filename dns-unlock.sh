@@ -146,24 +146,21 @@ case $main_choice in
     # 根据选择进入下一步操作
     case $config_choice in
     1)
-      # 更新为 HK 配置
-      echo -e "\033[1;34m更新 dnsmasq 配置为 HK 配置...\033[0m"
-      curl -o $CONFIG_FILE "https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/dnsmasq.conf.hk"
-      echo -e "\033[1;32mdnsmasq 配置已更新为 HK 配置！\033[0m"
-      systemctl restart dnsmasq
-      ;;
-
-    2)
-      # 更新为 SG 配置
-      echo -e "\033[1;34m更新 dnsmasq 配置为 SG 配置...\033[0m"
-      curl -o $CONFIG_FILE "https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/dnsmasq.conf.sg"
-      echo -e "\033[1;32mdnsmasq 配置已更新为 SG 配置！\033[0m"
-      systemctl restart dnsmasq
-      ;;
-    *)
-      echo -e "\033[31m[错误] 无效的选项！\033[0m"
-      exit 1
-      ;;
+    # 更新为 HK 配置
+    CONFIG_URL="https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/dnsmasq.conf.hk"
+    TARGET_FILE="dnsmasq.conf.hk"
+    REGION="HK"
+    ;;
+  2)
+    # 更新为 SG 配置
+    CONFIG_URL="https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/dnsmasq.conf.sg"
+    TARGET_FILE="dnsmasq.conf.sg"
+    REGION="SG"
+    ;;
+  *)
+    echo -e "\033[31m无效选择，请输入 1 或 2！\033[0m"
+    exit 1
+    ;;
   esac
 
   echo -e "\033[1;34m开始更新为 $REGION 配置...\033[0m"
@@ -198,7 +195,7 @@ case $main_choice in
     fi
   fi
   ;;
-
+  
   4)
     # 重启 dnsmasq 服务
     echo -e "\033[1;34m重启 dnsmasq 服务...\033[0m"
