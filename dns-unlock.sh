@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_0.9.8"
+VERSION="V_0.9.9"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -38,6 +38,9 @@ if ! grep -Ei 'debian|ubuntu' /etc/os-release > /dev/null; then
   echo -e "\033[31m[错误] 此脚本仅适用于 Debian 和 Ubuntu 系统！\033[0m"
   exit 1
 fi
+
+# 执行检查和创建符号链接的操作
+create_symlink
 
 # 公共函数：检查端口占用并释放
 check_and_release_port() {
