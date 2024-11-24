@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_0.8.9"
+VERSION="V_0.9.0"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -144,8 +144,8 @@ case $main_choice in
     read update_choice
 
     # 根据选择进入下一步操作
-    case $config_choice in
-    1)
+    case $update_choice in
+     1)
     # 更新为 HK 配置
     CONFIG_URL="https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/dnsmasq.conf.hk"
     TARGET_FILE="dnsmasq.conf.hk"
