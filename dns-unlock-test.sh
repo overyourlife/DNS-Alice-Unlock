@@ -64,6 +64,7 @@ echo -e "\033[1;34m======================================\033[0m"
 echo -e "\n"
 
 # 显示主菜单
+main_menu() {
 echo -e "\033[1;33m请选择要执行的操作：\033[0m"
 echo -e "\033[1;36m1.\033[0m \033[1;32mdnsmasq 分流配置\033[0m"
 echo -e "\033[1;36m2.\033[0m \033[1;32msmartdns 分流配置\033[0m"
@@ -76,6 +77,7 @@ echo -e "\n\033[1;33m请输入数字 (1-6):\033[0m"
 read main_choice
 
 case $main_choice in
+}
 1)
   # dnsmasq 分流配置子菜单
 while true; do
