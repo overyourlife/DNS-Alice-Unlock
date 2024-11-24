@@ -4,14 +4,28 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_0.9.7"
+VERSION="V_0.9.8"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
 CONFIG_URL="https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/dnsmasq.conf"
 CONFIG_FILE="/etc/dnsmasq.conf"
 SCRIPT_NAME="dns-unlock.sh"
+SCRIPT_PATH="/root/$SCRIPT_NAME"
+SYMLINK_PATH="/usr/local/bin/ddns"
 AUTHOR="Jimmydada"
+
+# 检查并创建 ddns 快捷命令（符号链接）
+create_symlink() {
+  if [ ! -f "$SYMLINK_PATH" ]; then
+    echo -e "\033[1;32m首次运行，创建快捷命令 ddns...\033[0m"
+    sudo ln -sf "$SCRIPT_PATH" "$SYMLINK_PATH"
+    sudo chmod +x "$SYMLINK_PATH"
+    echo -e "\033[1;32m快捷命令 ddns 创建成功！\033[0m"
+  else
+    echo -e "\033[1;33m快捷命令 ddns 已存在，跳过创建...\033[0m"
+  fi
+}
 
 # 检查是否以 root 身份运行6
 if [ "$EUID" -ne 0 ]; then
