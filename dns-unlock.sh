@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_0.9.6"
+VERSION="V_0.9.7"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -13,7 +13,7 @@ CONFIG_FILE="/etc/dnsmasq.conf"
 SCRIPT_NAME="dns-unlock.sh"
 AUTHOR="Jimmydada"
 
-# 检查是否以 root 身份运行
+# 检查是否以 root 身份运行6
 if [ "$EUID" -ne 0 ]; then
   echo -e "\033[31m[错误] 请以 root 权限运行此脚本！\033[0m"
   exit 1
@@ -457,7 +457,7 @@ case $main_choice in
   REMOTE_VERSION=$(curl -s https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/dns-unlock.sh | grep "VERSION=" | cut -d '"' -f 2)
   
   # 当前脚本的版本号
-  CURRENT_VERSION="V_0.9.4"
+ CURRENT_VERSION=$(grep 'VERSION=' /root/dns-unlock.sh | cut -d '"' -f 2)
   
   echo -e "\033[1;33m当前版本：$CURRENT_VERSION\033[0m"
   echo -e "\033[1;33m远程版本：$REMOTE_VERSION\033[0m"
