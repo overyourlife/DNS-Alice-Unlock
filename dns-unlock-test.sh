@@ -148,7 +148,7 @@ while true; do
     1)
       # 更新为 HK 配置
       echo -e "\033[1;34m更新 dnsmasq 配置为 HK 配置...\033[0m"
-      curl -o $CONFIG_FILE "https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/main/dnsmasq.hk.conf"
+      curl -o $CONFIG_FILE "https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/dnsmasq.conf.hk"
       echo -e "\033[1;32mdnsmasq 配置已更新为 HK 配置！\033[0m"
       systemctl restart dnsmasq
       ;;
@@ -156,7 +156,7 @@ while true; do
     2)
       # 更新为 SG 配置
       echo -e "\033[1;34m更新 dnsmasq 配置为 SG 配置...\033[0m"
-      curl -o $CONFIG_FILE "https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/main/dnsmasq.sg.conf"
+      curl -o $CONFIG_FILE "https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/dnsmasq.conf.sg"
       echo -e "\033[1;32mdnsmasq 配置已更新为 SG 配置！\033[0m"
       systemctl restart dnsmasq
       ;;
