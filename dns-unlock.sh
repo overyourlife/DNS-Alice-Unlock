@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_1.0.4"
+VERSION="V_1.0.5"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -70,7 +70,7 @@ set_and_lock_resolv_conf() {
   echo -e "\033[1;32m操作成功！当前 nameserver 已设置为 $nameserver 并已锁定。\033[0m"
 }
 
-# 公共函数：设置 /etc/resolv.conf 文件为指定 DNS 并重启网络服务
+# 函数：设置 /etc/resolv.conf 文件为 8.8.8.8 并重启系统 DNS 服务
 set_dns_and_restart() {
   echo -e "\033[1;34m备份原有的 /etc/resolv.conf 文件...\033[0m"
   cp /etc/resolv.conf /etc/resolv.conf.bak
