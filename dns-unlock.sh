@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_1.2.0"
+VERSION="V_1.2.1"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -220,12 +220,13 @@ case $main_choice in
     echo -e "\033[1;32mdnsmasq 已成功卸载并恢复默认配置！\033[0m"
     ;;
 
-  3)
+3)
     # 更新 dnsmasq 配置文件
     echo -e "\033[1;34m进入 dnsmasq 配置文件更新菜单...\033[0m"
     echo -e "\033[1;33m请选择要更新的配置：\033[0m"
     echo -e "\033[1;36m1.\033[0m \033[1;32m更新为 HK 配置\033[0m"
     echo -e "\033[1;36m2.\033[0m \033[1;32m更新为 SG 配置\033[0m"
+    echo -e "\033[1;36m3.\033[0m \033[1;32m更新为全量配置\033[0m"
     echo -e "\033[1;36m0.\033[0m \033[1;31m退出脚本\033[0m"
     read update_choice
 
@@ -243,7 +244,12 @@ case $main_choice in
     TARGET_FILE="dnsmasq.conf.sg"
     REGION="SG"
     ;;
-  
+  3)
+    # 更新为全量配置
+    CONFIG_URL="https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/dnsmasq.conf.allsg"
+    TARGET_FILE="dnsmasq.conf.allsg"
+    REGION="AllSG"
+    ;;
   *)
     echo -e "\033[31m无效选择，请输入0-3！\033[0m"
     exit 1
@@ -262,9 +268,28 @@ case $main_choice in
   echo -e "\033[1;33m下载新的 $REGION 配置文件...\033[0m"
   curl -o "/etc/$TARGET_FILE" "$CONFIG_URL"
   if [ $? -eq 0 ]; then
+    echo -e "\033[1;32m$REGION 配置文件下载成功！\033[0m"
+    
+    # 提示用户是否更换 IP
+    if [ "$REGION" == "AllSG" ]; then
+      echo -e "\033[1;33m配置文件中包含 IP 地址 157.20.104.47，是否需要替换为自己的 IP 地址？(回车默认不修改，输入 y 修改)\033[0m"
+      read use_own_ip
+
+      if [ "$use_own_ip" == "y" ]; then
+        echo -e "\033[1;33m请输入您的 IP 地址：\033[0m"
+        read user_ip
+        # 替换文件中的 IP 地址
+        sed -i "s/157.20.104.47/$user_ip/g" /etc/$TARGET_FILE
+        echo -e "\033[1;32mIP 地址已替换为 $user_ip\033[0m"
+      else
+        echo -e "\033[1;32m保留原有 IP 地址！\033[0m"
+      fi
+    fi
+
+    # 将新的配置文件替换为 dnsmasq 的默认配置文件
     mv "/etc/$TARGET_FILE" /etc/dnsmasq.conf
     echo -e "\033[1;32m$REGION 配置文件更新成功！\033[0m"
-    
+
     # 重启 dnsmasq 服务
     echo -e "\033[1;33m重启 dnsmasq 服务...\033[0m"
     systemctl restart dnsmasq
