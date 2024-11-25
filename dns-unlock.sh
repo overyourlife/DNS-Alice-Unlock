@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_1.1.5"
+VERSION="V_1.1.6"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -46,16 +46,43 @@ create_symlink
 check_and_release_port() {
   local port=$1
   echo -e "\033[1;34m检查端口 $port 的占用情况...\033[0m"
+
+  # 检查端口是否被占用
   if lsof -i :$port | grep -q LISTEN; then
     echo -e "\033[31m端口 $port 被以下进程占用：\033[0m"
     lsof -i :$port
-    echo -e "\033[33m尝试关闭相关进程...\033[0m"
+
+    # 检查是否是由 smartdns 占用
+    if lsof -i :$port | grep -q 'smartdns'; then
+      echo -e "\033[33msmartdns 服务正在占用端口 $port，尝试停止服务...\033[0m"
+      systemctl stop smartdns && systemctl disable smartdns
+      if [ $? -eq 0 ]; then
+        echo -e "\033[1;32msmartdns 服务已成功停止。\033[0m"
+      else
+        echo -e "\033[31m[错误] 无法停止 smartdns 服务，请手动检查。\033[0m"
+      fi
+    fi
+
+    # 检查是否是由 dnsmasq 占用
+    if lsof -i :$port | grep -q 'dnsmasq'; then
+      echo -e "\033[33mdnsmasq 服务正在占用端口 $port，尝试停止服务...\033[0m"
+      systemctl stop dnsmasq && systemctl disable dnsmasq
+      if [ $? -eq 0 ]; then
+        echo -e "\033[1;32mdnsmasq 服务已成功停止。\033[0m"
+      else
+        echo -e "\033[31m[错误] 无法停止 dnsmasq 服务，请手动检查。\033[0m"
+      fi
+    fi
+
+    # 检测其他未知进程并尝试终止
+    echo -e "\033[33m尝试关闭端口 $port 的其他占用进程...\033[0m"
     lsof -i :$port | awk 'NR>1 {print $2}' | xargs -r kill -9
     echo -e "\033[1;32m端口 $port 已释放。\033[0m"
   else
     echo -e "\033[1;32m端口 $port 未被占用。\033[0m"
   fi
 }
+
 
 # 公共函数：设置 resolv.conf 并锁定
 set_and_lock_resolv_conf() {
