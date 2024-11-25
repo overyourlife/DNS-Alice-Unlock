@@ -4,8 +4,31 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_1.2.3"
+VERSION="V_1.2.4"
 LAST_UPDATED=$(date +"%Y-%m-%d")
+
+# 检查是否以 root 身份运行6
+if [ "$EUID" -ne 0 ]; then
+  echo -e "\033[31m[错误] 请以 root 权限运行此脚本！\033[0m"
+  exit 1
+fi
+
+# 检查系统是否为 Debian/Ubuntu
+if ! grep -Ei 'debian|ubuntu' /etc/os-release > /dev/null; then
+  echo -e "\033[31m[错误] 此脚本仅适用于 Debian 和 Ubuntu 系统！\033[0m"
+  exit 1
+fi
+
+# 检查 curl 和 jq 是否安装，未安装则自动安装
+if ! command -v curl &> /dev/null; then
+    echo -e "\033[31mcurl 未安装，正在安装...\033[0m"
+    sudo apt-get update && sudo apt-get install -y curl
+fi
+
+if ! command -v jq &> /dev/null; then
+    echo -e "\033[31mjq 未安装，正在安装...\033[0m"
+    sudo apt-get update && sudo apt-get install -y jq
+fi
 
 # 指定配置文件的下载地址
 CONFIG_URL="https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/dnsmasq.conf"
@@ -32,17 +55,6 @@ IP_INFO=$(curl -s http://ipinfo.io/json)
 IP_ADDRESS=$(echo $IP_INFO | jq -r '.ip')
 REGION=$(echo $IP_INFO | jq -r '.region')
 
-# 检查是否以 root 身份运行6
-if [ "$EUID" -ne 0 ]; then
-  echo -e "\033[31m[错误] 请以 root 权限运行此脚本！\033[0m"
-  exit 1
-fi
-
-# 检查系统是否为 Debian/Ubuntu
-if ! grep -Ei 'debian|ubuntu' /etc/os-release > /dev/null; then
-  echo -e "\033[31m[错误] 此脚本仅适用于 Debian 和 Ubuntu 系统！\033[0m"
-  exit 1
-fi
 
 # 执行检查和创建符号链接的操作
 create_symlink
