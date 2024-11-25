@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_1.1.6"
+VERSION="V_1.1.7"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -197,13 +197,12 @@ case $main_choice in
     echo -e "\033[1;33m请选择要更新的配置：\033[0m"
     echo -e "\033[1;36m1.\033[0m \033[1;32m更新为 HK 配置\033[0m"
     echo -e "\033[1;36m2.\033[0m \033[1;32m更新为 SG 配置\033[0m"
-    echo -e "\033[1;36m3.\033[0m \033[1;32m更新为 全量配置\033[0m"
     echo -e "\033[1;36m0.\033[0m \033[1;31m退出脚本\033[0m"
     read update_choice
 
     # 根据选择进入下一步操作
     case $update_choice in
-     1)
+  1)
     # 更新为 HK 配置
     CONFIG_URL="https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/dnsmasq.conf.hk"
     TARGET_FILE="dnsmasq.conf.hk"
@@ -215,57 +214,7 @@ case $main_choice in
     TARGET_FILE="dnsmasq.conf.sg"
     REGION="SG"
     ;;
-  3)
-      # 更新全量配置
-      CONFIG_URL="https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/dnsmasq.conf.allsg"
-      CONFIG_FILE="/etc/dnsmasq.conf"
-      BACKUP_FILE="/etc/dnsmasq.conf.bak"
-      TEMP_FILE="/tmp/dnsmasq.conf.allsg"
-
-      echo "正在下载最新的 dnsmasq 全量配置文件..."
-      curl -o $TEMP_FILE $CONFIG_URL
-      if [ $? -ne 0 ]; then
-        echo -e "\033[31m[错误] 配置文件下载失败！请检查网络连接。\033[0m"
-        continue
-      fi
-
-      echo "检测到配置文件中可能需要更换的 IP：157.20.104.47"
-      echo -e "\033[1;34m是否需要替换为其他 IP 地址？[y/N]\033[0m"
-      read replace_choice
-      if [[ "$replace_choice" =~ ^[Yy]$ ]]; then
-        echo -e "\033[1;34m请输入新的 IP 地址：\033[0m"
-        read new_ip
-        sed -i "s/157\.20\.104\.47/$new_ip/g" $TEMP_FILE
-        echo -e "\033[1;32m已将 157.20.104.47 替换为 $new_ip\033[0m"
-      fi
-
-      # 检测是否存在默认配置文件
-      if [ -f $CONFIG_FILE ]; then
-        echo "备份当前的 dnsmasq 配置文件..."
-        cp $CONFIG_FILE $BACKUP_FILE
-        if [ $? -ne 0 ]; then
-          echo -e "\033[31m[错误] 配置文件备份失败！\033[0m"
-          continue
-        fi
-      else
-        echo -e "\033[1;33m未检测到默认配置文件，跳过备份。\033[0m"
-      fi
-
-      echo "替换 dnsmasq 配置文件..."
-      mv $TEMP_FILE $CONFIG_FILE
-      if [ $? -ne 0 ]; then
-        echo -e "\033[31m[错误] 配置文件替换失败！\033[0m"
-        continue
-      fi
-
-      echo "重启 dnsmasq 服务..."
-      systemctl restart dnsmasq
-      if [ $? -ne 0 ]; then
-        echo -e "\033[31m[错误] dnsmasq 服务重启失败！\033[0m"
-      else
-        echo -e "\033[1;32mdnsmasq 配置已更新并成功重启服务！\033[0m"
-      fi
-      ;;
+  
   *)
     echo -e "\033[31m无效选择，请输入0-3！\033[0m"
     exit 1
