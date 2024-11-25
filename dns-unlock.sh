@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_1.1.2"
+VERSION="V_1.1.3"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -255,8 +255,9 @@ case $main_choice in
   echo -e "\033[1;36m1.\033[0m \033[1;32m安装并配置 smartdns 分流\033[0m"
   echo -e "\033[1;36m2.\033[0m \033[1;32m重启 smartdns 服务\033[0m"
   echo -e "\033[1;36m3.\033[0m \033[1;32m卸载 smartdns 并恢复默认 resolv.conf 配置\033[0m"
+  echo -e "\033[1;36m4.\033[0m \033[1;32m一键更新全量配置\033[0m"
   echo -e "\033[1;36m0.\033[0m \033[1;31m退出脚本\033[0m"
-  echo -e "\n\033[1;33m请输入数字 (0-3):\033[0m"
+  echo -e "\n\033[1;33m请输入数字 (0-4):\033[0m"
   read smartdns_choice
 
   case $smartdns_choice in
@@ -406,6 +407,52 @@ echo -e "\033[1;32msmartdns 配置已完成，服务已启动并设置为开机�
       echo -e "\033[31m[错误] 找不到备份文件 /etc/resolv.conf.bak！\033[0m"
     fi
     ;;
+
+    4)
+      # 一键更新全量配置（默认SG）
+      CONFIG_URL="https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/smartdns.conf.sg"
+      CONFIG_FILE="/etc/smartdns/smartdns.conf"
+      BACKUP_FILE="/etc/smartdns/smartdns.conf.bak"
+
+      echo "正在下载最新的 SmartDNS 配置文件..."
+      curl -o /tmp/smartdns.conf.sg $CONFIG_URL
+      if [ $? -ne 0 ]; then
+        echo -e "\033[31m[错误] 配置文件下载失败！请检查网络连接。\033[0m"
+        continue
+      fi
+
+      echo "检测到配置文件中可能需要更换的 IP：157.20.104.47"
+      echo -e "\033[1;34m是否需要替换自己的解锁 IP 地址？[y/N]\033[0m"
+      read replace_choice
+      if [[ "$replace_choice" =~ ^[Yy]$ ]]; then
+        echo -e "\033[1;34m请输入新的 IP 地址：\033[0m"
+        read new_ip
+        sed -i "s/157\.20\.104\.47/$new_ip/g" /tmp/smartdns.conf.sg
+        echo -e "\033[1;32m已将 157.20.104.47 替换为 $new_ip\033[0m"
+      fi
+
+      echo "备份当前的 SmartDNS 配置文件..."
+      cp $CONFIG_FILE $BACKUP_FILE
+      if [ $? -ne 0 ]; then
+        echo -e "\033[31m[错误] 配置文件备份失败！\033[0m"
+        continue
+      fi
+
+      echo "替换 SmartDNS 配置文件..."
+      mv /tmp/smartdns.conf.sg $CONFIG_FILE
+      if [ $? -ne 0 ]; then
+        echo -e "\033[31m[错误] 配置文件替换失败！\033[0m"
+        continue
+      fi
+
+      echo "重启 SmartDNS 服务..."
+      systemctl restart smartdns
+      if [ $? -ne 0 ]; then
+        echo -e "\033[31m[错误] SmartDNS 服务重启失败！\033[0m"
+      else
+        echo -e "\033[1;32mSmartDNS 配置已更新并成功重启服务！\033[0m"
+      fi
+      ;;
 
     0)
       break
