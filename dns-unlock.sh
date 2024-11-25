@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_1.0.8"
+VERSION="V_1.0.9"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -396,7 +396,7 @@ case $main_choice in
   echo -e "\033[1;36m5.\033[0m \033[1;32m一键恢复 8.8.8.8 并重启系统 DNS\033[0m"
   echo -e "\033[1;36m0.\033[0m \033[1;31m退出脚本\033[0m"
   echo -e "\n\033[1;33m请输入数字 (0-5):\033[0m"
-  read choice
+  read resolv_choice
   
   case $resolv_choice in
   1)
