@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_1.1.0"
+VERSION="V_1.1.1"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -414,11 +414,63 @@ case $main_choice in
     ;;
 
   3)
-    # 一键更换 nameserver
-    echo -e "\033[1;34m请输入要更换的 nameserver 地址：\033[0m"
-    read nameserver
-    set_and_lock_resolv_conf $nameserver
-    ;;
+  # 一键更换 nameserver
+  echo -e "\033[1;34m检测 /etc/resolv.conf 是否被锁定...\033[0m"
+
+  # 检测是否被锁定
+  if lsattr /etc/resolv.conf | grep -q 'i'; then
+    echo -e "\033[1;33m检测到 /etc/resolv.conf 被锁定，正在解锁...\033[0m"
+    chattr -i /etc/resolv.conf
+    if [ $? -eq 0 ]; then
+      echo -e "\033[1;32m文件已解锁！\033[0m"
+    else
+      echo -e "\033[31m解锁失败，请检查权限！\033[0m"
+      exit 1
+    fi
+  else
+    echo -e "\033[1;32m文件未锁定，无需解锁。\033[0m"
+  fi
+
+  # 提示用户输入新的 nameserver 地址
+  echo -e "\033[1;34m请输入要更换的 nameserver 地址（例如 8.8.8.8）：\033[0m"
+  read nameserver
+
+  # 验证输入是否为有效的 IP 地址
+  if [[ ! $nameserver =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo -e "\033[31m输入的 DNS 地址无效，请输入正确的 IPv4 地址！\033[0m"
+    exit 1
+  fi
+
+  # 更新 /etc/resolv.conf 文件
+  echo -e "\033[1;34m正在更新 /etc/resolv.conf 配置...\033[0m"
+  echo "nameserver $nameserver" > /etc/resolv.conf
+  if [ $? -eq 0 ]; then
+    echo -e "\033[1;32m更新成功：nameserver $nameserver\033[0m"
+  else
+    echo -e "\033[31m更新失败，请检查权限！\033[0m"
+    exit 1
+  fi
+
+  # 锁定 /etc/resolv.conf 文件
+  echo -e "\033[1;34m正在锁定 /etc/resolv.conf...\033[0m"
+  chattr +i /etc/resolv.conf
+  if [ $? -eq 0 ]; then
+    echo -e "\033[1;32m文件已成功锁定！\033[0m"
+  else
+    echo -e "\033[31m锁定失败，请检查权限！\033[0m"
+    exit 1
+  fi
+
+  # 重启 DNS 服务
+  echo -e "\033[1;34m正在重启系统 DNS 服务...\033[0m"
+  systemctl restart systemd-resolved
+  if [ $? -eq 0 ]; then
+    echo -e "\033[1;32m系统 DNS 服务已重启！\033[0m"
+  else
+    echo -e "\033[31m系统 DNS 服务重启失败，请检查配置或日志！\033[0m"
+    exit 1
+  fi
+  ;;
 
   4)
     # 恢复原始配置
