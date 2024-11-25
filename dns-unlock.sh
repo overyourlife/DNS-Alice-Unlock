@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_1.0.7"
+VERSION="V_1.0.8"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -398,7 +398,6 @@ case $main_choice in
   echo -e "\n\033[1;33m请输入数字 (0-5):\033[0m"
   read choice
   
-
   case $resolv_choice in
   1)
     # 解锁 resolv.conf 文件
@@ -430,7 +429,7 @@ case $main_choice in
     ;;
     
   5)
-    # 配置为 8.8.8.8
+    # 一键恢复 8.8.8.8 并重启系统 DNS
     echo -e "\033[1;34m备份原有的 /etc/resolv.conf 文件...\033[0m"
     cp /etc/resolv.conf /etc/resolv.conf.bak
     echo -e "\033[1;34m修改 /etc/resolv.conf 配置为 8.8.8.8...\033[0m"
@@ -477,11 +476,6 @@ case $main_choice in
   echo -e "\033[1;32m脚本已成功删除！\033[0m"
   ;;
 
-0)
-  echo -e "\033[1;31m退出脚本...\033[0m"
-  exit 0
-  ;;
-
 7)
   # 更新脚本
   echo -e "\033[1;34m检查远程脚本版本...\033[0m"
@@ -519,6 +513,12 @@ case $main_choice in
     echo -e "\033[1;32m当前已经是最新版本，无需更新！\033[0m"
   fi
   ;;
+  
+  0)
+  echo -e "\033[1;31m退出脚本...\033[0m"
+  exit 0
+  ;;
+
 *)
   echo -e "\033[31m无效选择，请重新输入！\033[0m"
   ;;
