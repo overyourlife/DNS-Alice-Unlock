@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_1.1.3"
+VERSION="V_1.1.4"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -409,7 +409,7 @@ echo -e "\033[1;32msmartdns 配置已完成，服务已启动并设置为开机�
     ;;
 
     4)
-      # 一键更新全量配置（默认SG）
+      # 一键更新全量配置
       CONFIG_URL="https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/smartdns.conf.sg"
       CONFIG_FILE="/etc/smartdns/smartdns.conf"
       BACKUP_FILE="/etc/smartdns/smartdns.conf.bak"
@@ -422,7 +422,7 @@ echo -e "\033[1;32msmartdns 配置已完成，服务已启动并设置为开机�
       fi
 
       echo "检测到配置文件中可能需要更换的 IP：157.20.104.47"
-      echo -e "\033[1;34m是否需要替换自己的解锁 IP 地址？[y/N]\033[0m"
+      echo -e "\033[1;34m是否需要替换为其他 IP 地址？[y/N]\033[0m"
       read replace_choice
       if [[ "$replace_choice" =~ ^[Yy]$ ]]; then
         echo -e "\033[1;34m请输入新的 IP 地址：\033[0m"
@@ -431,11 +431,16 @@ echo -e "\033[1;32msmartdns 配置已完成，服务已启动并设置为开机�
         echo -e "\033[1;32m已将 157.20.104.47 替换为 $new_ip\033[0m"
       fi
 
-      echo "备份当前的 SmartDNS 配置文件..."
-      cp $CONFIG_FILE $BACKUP_FILE
-      if [ $? -ne 0 ]; then
-        echo -e "\033[31m[错误] 配置文件备份失败！\033[0m"
-        continue
+      # 检测是否存在默认配置文件
+      if [ -f $CONFIG_FILE ]; then
+        echo "备份当前的 SmartDNS 配置文件..."
+        cp $CONFIG_FILE $BACKUP_FILE
+        if [ $? -ne 0 ]; then
+          echo -e "\033[31m[错误] 配置文件备份失败！\033[0m"
+          continue
+        fi
+      else
+        echo -e "\033[1;33m未检测到默认配置文件，跳过备份。\033[0m"
       fi
 
       echo "替换 SmartDNS 配置文件..."
