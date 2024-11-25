@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_1.2.2"
+VERSION="V_1.2.3"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -119,8 +119,7 @@ echo -e "\033[1;32m       一键配置 dnsmasq 分流脚本       \033[0m"
 echo -e "\033[1;36m       版本：  $VERSION       \033[0m"
 echo -e "\033[1;36m       更新时间：$LAST_UPDATED        \033[0m"
 echo -e "\033[1;36m       本脚本由 $AUTHOR 维护          \033[0m"
-echo -e "\033[1;36m       VPS IP： $IP_ADDRESS            \033[0m"
-echo -e "\033[1;36m       所属地区： $REGION              \033[0m"
+echo -e "\033[1;36m    VPS IP： $IP_ADDRESS  $REGION     \033[0m"
 echo -e "\033[1;34m======================================\033[0m"
 echo -e "\n"
 
