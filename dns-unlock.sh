@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_1.0.9"
+VERSION="V_1.1.0"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -430,18 +430,27 @@ case $main_choice in
     
   5)
     # 一键恢复 8.8.8.8 并重启系统 DNS
-    echo -e "\033[1;34m备份原有的 /etc/resolv.conf 文件...\033[0m"
-    cp /etc/resolv.conf /etc/resolv.conf.bak
-    echo -e "\033[1;34m修改 /etc/resolv.conf 配置为 8.8.8.8...\033[0m"
-    echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" > /etc/resolv.conf
-    echo -e "\033[1;34m重启系统 DNS 服务...\033[0m"
-    systemctl restart systemd-resolved
-    if [ $? -eq 0 ]; then
-    echo -e "\033[1;32m系统 DNS 已成功设置为 8.8.8.8 并重启！\033[0m"
-    else
-    echo -e "\033[31m[错误] DNS 服务重启失败，请检查配置！\033[0m"
-    fi
-    ;;
+      echo -e "\033[1;34m检测 /etc/resolv.conf 是否被锁定...\033[0m"
+      if lsattr /etc/resolv.conf | grep -q "\-i\-"; then
+        echo -e "\033[1;33m文件已锁定，正在解锁...\033[0m"
+        chattr -i /etc/resolv.conf
+        echo -e "\033[1;32m文件已解锁，继续操作...\033[0m"
+      else
+        echo -e "\033[1;32m文件未锁定，无需解锁。\033[0m"
+      fi
+
+      echo -e "\033[1;34m备份原有的 /etc/resolv.conf 文件...\033[0m"
+      cp /etc/resolv.conf /etc/resolv.conf.bak
+      echo -e "\033[1;34m修改 /etc/resolv.conf 配置为 8.8.8.8...\033[0m"
+      echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" > /etc/resolv.conf
+      echo -e "\033[1;34m重启系统 DNS 服务...\033[0m"
+      systemctl restart systemd-resolved
+      if [ $? -eq 0 ]; then
+        echo -e "\033[1;32m系统 DNS 已成功设置为 8.8.8.8 并重启！\033[0m"
+      else
+        echo -e "\033[31m[错误] DNS 服务重启失败，请检查配置！\033[0m"
+      fi
+      ;;
       
     0)
       break
