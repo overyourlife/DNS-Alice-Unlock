@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_1.1.7"
+VERSION="V_1.1.8"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -144,6 +144,24 @@ case $main_choice in
       exit 1
     fi
 
+    # 检查是否成功安装
+    if ! command -v dnsmasq >/dev/null 2>&1; then
+        echo -e "\033[31m[错误] dnsmasq 安装失败，请检查！\033[0m"
+        exit 1
+    fi
+    echo -e "\033[1;32m[dnsmasq] 安装完成。\033[0m"
+
+    # 检查是否安装 lsof
+    if ! command -v lsof >/dev/null 2>&1; then
+        echo -e "\033[33m检测到系统未安装 lsof 工具，正在安装...\033[0m"
+        apt update && apt install -y lsof
+        if ! command -v lsof >/dev/null 2>&1; then
+            echo -e "\033[31m[错误] lsof 安装失败，请手动安装后重试！\033[0m"
+            exit 1
+        fi
+        echo -e "\033[1;32m[lsof] 工具安装完成。\033[0m"
+    fi
+
      # 下载并更新配置文件
     echo -e "\033[1;34m下载并覆盖 dnsmasq 配置文件...\033[0m"
     curl -o $CONFIG_FILE $CONFIG_URL
@@ -168,6 +186,17 @@ case $main_choice in
 
     # 检查端口 53 占用情况
     check_and_release_port 53
+
+    # 再次确认端口是否释放
+    if lsof -i :53 | grep -q LISTEN; then
+    echo -e "\033[31m[错误] 无法释放端口 53，请检查并手动处理！\033[0m"
+    exit 1
+    else
+    echo -e "\033[1;32m端口 53 已成功释放。\033[0m"
+    fi
+    else
+        echo -e "\033[1;32m端口 53 未被占用。\033[0m"
+    fi
 
     # 备份并更新 /etc/resolv.conf
     set_and_lock_resolv_conf "127.0.0.1"
