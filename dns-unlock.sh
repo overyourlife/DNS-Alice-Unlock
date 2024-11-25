@@ -4,7 +4,7 @@
 # 请确保使用 sudo 或 root 权限运行此脚本
 
 # 脚本版本和更新时间
-VERSION="V_1.1.1"
+VERSION="V_1.1.2"
 LAST_UPDATED=$(date +"%Y-%m-%d")
 
 # 指定配置文件的下载地址
@@ -260,85 +260,117 @@ case $main_choice in
   read smartdns_choice
 
   case $smartdns_choice in
-  1)
+1)
 # 安装 smartdns
-  echo "安装 smartdns..."
-  apt update && apt install -y smartdns
-  if [ $? -ne 0 ]; then
-    echo -e "\033[31m[错误] smartdns 安装失败，请检查系统环境！\033[0m"
-    exit 1
-  fi
+echo -e "\033[1;34m正在安装 smartdns...\033[0m"
+apt update && apt install -y smartdns
+if [ $? -ne 0 ]; then
+  echo -e "\033[31m[错误] smartdns 安装失败，请检查系统环境！\033[0m"
+  exit 1
+fi
 
-  # 下载 smartdns 配置文件
-  echo "下载 smartdns 配置文件..."
-  curl -o /etc/smartdns/smartdns.conf https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/smartdns.conf
-  if [ $? -ne 0 ]; then
-    echo -e "\033[31m[错误] 配置文件下载失败！\033[0m"
-    exit 1
-  fi
+# 下载 smartdns 配置文件
+echo -e "\033[1;34m正在下载 smartdns 配置文件...\033[0m"
+curl -o /etc/smartdns/smartdns.conf https://raw.githubusercontent.com/Jimmyzxk/DNS-Alice-Unlock/refs/heads/main/smartdns.conf
+if [ $? -ne 0 ]; then
+  echo -e "\033[31m[错误] 配置文件下载失败！\033[0m"
+  exit 1
+fi
 
-  # 检查端口 53 是否被占用
-  PORT_IN_USE=$(sudo netstat -tuln | grep ':53')
-  if [ -n "$PORT_IN_USE" ]; then
-    echo "端口 53 已被占用，检查是否为 systemd-resolved..."
-    SYSTEMD_RESOLVED=$(ps aux | grep 'systemd-resolved' | grep -v 'grep')
-    if [ -n "$SYSTEMD_RESOLVED" ]; then
-      echo "systemd-resolved 正在占用端口 53，停止 systemd-resolved 服务..."
-      systemctl stop systemd-resolved
-      systemctl disable systemd-resolved
-    else
-      echo "其他进程占用端口 53，停止相关服务..."
-      sudo systemctl stop dnsmasq
-      sudo systemctl disable dnsmasq
-    fi
+# 检测 smartdns 配置文件中的默认 IP
+DEFAULT_IP1="154.12.177.22"
+DEFAULT_IP2="157.20.104.47"
+
+echo -e "\033[1;34m检测到配置文件中的默认 IP 为：\033[0m"
+echo -e "\033[1;33m1. $DEFAULT_IP1\033[0m"
+echo -e "\033[1;33m2. $DEFAULT_IP2\033[0m"
+echo -e "\033[1;34m是否需要修改这些 IP？(y/N):\033[0m"
+read change_ip
+
+if [[ "$change_ip" == "y" || "$change_ip" == "Y" ]]; then
+  echo -e "\033[1;34m请输入第一个 IP 的新值（留空则保留 $DEFAULT_IP1）：\033[0m"
+  read new_ip1
+  if [ -n "$new_ip1" ]; then
+    sed -i "s/$DEFAULT_IP1/$new_ip1/" /etc/smartdns/smartdns.conf
+    echo -e "\033[1;32m已将 $DEFAULT_IP1 替换为 $new_ip1！\033[0m"
   else
-    echo "端口 53 未被占用，可以继续配置！"
+    echo -e "\033[1;33m保留 $DEFAULT_IP1！\033[0m"
   fi
 
-  # 检查 /etc/resolv.conf 文件是否已被锁定，如果已锁定则解锁
-  if lsattr /etc/resolv.conf | grep -q 'i'; then
-    echo "文件 /etc/resolv.conf 已被锁定，正在解锁..."
-    chattr -i /etc/resolv.conf
-    if [ $? -ne 0 ]; then
-      echo -e "\033[31m[错误] 解锁 /etc/resolv.conf 文件失败！\033[0m"
-      exit 1
-    fi
+  echo -e "\033[1;34m请输入第二个 IP 的新值（留空则保留 $DEFAULT_IP2）：\033[0m"
+  read new_ip2
+  if [ -n "$new_ip2" ]; then
+    sed -i "s/$DEFAULT_IP2/$new_ip2/" /etc/smartdns/smartdns.conf
+    echo -e "\033[1;32m已将 $DEFAULT_IP2 替换为 $new_ip2！\033[0m"
+  else
+    echo -e "\033[1;33m保留 $DEFAULT_IP2！\033[0m"
   fi
+else
+  echo -e "\033[1;33m保持默认 IP 配置！\033[0m"
+fi
 
-  # 备份 /etc/resolv.conf 文件
-  echo "备份 /etc/resolv.conf 文件..."
-  cp /etc/resolv.conf /etc/resolv.conf.bak
+# 检查端口 53 是否被占用
+PORT_IN_USE=$(sudo netstat -tuln | grep ':53')
+if [ -n "$PORT_IN_USE" ]; then
+  echo -e "\033[1;34m端口 53 已被占用，检查是否为 systemd-resolved...\033[0m"
+  SYSTEMD_RESOLVED=$(ps aux | grep 'systemd-resolved' | grep -v 'grep')
+  if [ -n "$SYSTEMD_RESOLVED" ]; then
+    echo -e "\033[1;33msystemd-resolved 正在占用端口 53，停止 systemd-resolved 服务...\033[0m"
+    systemctl stop systemd-resolved
+    systemctl disable systemd-resolved
+  else
+    echo -e "\033[1;33m其他进程占用端口 53，停止相关服务...\033[0m"
+    sudo systemctl stop dnsmasq
+    sudo systemctl disable dnsmasq
+  fi
+else
+  echo -e "\033[1;32m端口 53 未被占用，可以继续配置！\033[0m"
+fi
+
+# 检查 /etc/resolv.conf 文件是否被锁定，如果已锁定则解锁
+if lsattr /etc/resolv.conf | grep -q 'i'; then
+  echo -e "\033[1;33m文件 /etc/resolv.conf 已被锁定，正在解锁...\033[0m"
+  chattr -i /etc/resolv.conf
   if [ $? -ne 0 ]; then
-    echo -e "\033[31m[错误] /etc/resolv.conf 备份失败！\033[0m"
+    echo -e "\033[31m[错误] 解锁 /etc/resolv.conf 文件失败！\033[0m"
     exit 1
   fi
+fi
 
-  # 修改 /etc/resolv.conf 中的 nameserver 为 127.0.0.1
-  echo "修改 /etc/resolv.conf 文件中的 nameserver 为 127.0.0.1..."
-  sed -i 's/nameserver .*/nameserver 127.0.0.1/' /etc/resolv.conf
-  if [ $? -ne 0 ]; then
-    echo -e "\033[31m[错误] 修改 /etc/resolv.conf 文件失败！\033[0m"
-    exit 1
-  fi
+# 备份 /etc/resolv.conf 文件
+echo -e "\033[1;34m备份 /etc/resolv.conf 文件...\033[0m"
+cp /etc/resolv.conf /etc/resolv.conf.bak
+if [ $? -ne 0 ]; then
+  echo -e "\033[31m[错误] /etc/resolv.conf 备份失败！\033[0m"
+  exit 1
+fi
 
-  # 锁定 /etc/resolv.conf 文件
-  echo "锁定 /etc/resolv.conf 文件..."
-  chattr +i /etc/resolv.conf
-  if [ $? -ne 0 ]; then
-    echo -e "\033[31m[错误] 锁定 /etc/resolv.conf 文件失败！\033[0m"
-    exit 1
-  fi
+# 修改 /etc/resolv.conf 中的 nameserver 为 127.0.0.1
+echo -e "\033[1;34m修改 /etc/resolv.conf 文件中的 nameserver 为 127.0.0.1...\033[0m"
+echo "nameserver 127.0.0.1" > /etc/resolv.conf
+if [ $? -ne 0 ]; then
+  echo -e "\033[31m[错误] 修改 /etc/resolv.conf 文件失败！\033[0m"
+  exit 1
+fi
 
-  # 启动 smartdns 服务并设置为开机启动
-  echo "启动 smartdns 并设置为开机启动..."
-  systemctl restart smartdns && systemctl enable smartdns
-  if [ $? -ne 0 ]; then
-    echo -e "\033[31m[错误] smartdns 启动失败！\033[0m"
-    exit 1
-  fi
+# 锁定 /etc/resolv.conf 文件
+echo -e "\033[1;34m锁定 /etc/resolv.conf 文件...\033[0m"
+chattr +i /etc/resolv.conf
+if [ $? -ne 0 ]; then
+  echo -e "\033[31m[错误] 锁定 /etc/resolv.conf 文件失败！\033[0m"
+  exit 1
+fi
 
-  echo -e "\033[1;32msmartdns 配置已完成，服务已启动并设置为开机启动！\033[0m"
-  ;;
+# 启动 smartdns 服务并设置为开机启动
+echo -e "\033[1;34m启动 smartdns 并设置为开机启动...\033[0m"
+systemctl restart smartdns && systemctl enable smartdns
+if [ $? -ne 0 ]; then
+  echo -e "\033[31m[错误] smartdns 启动失败！\033[0m"
+  exit 1
+fi
+
+echo -e "\033[1;32msmartdns 配置已完成，服务已启动并设置为开机启动！\033[0m"
+;;
 
   2)
     # 重启 smartdns 服务
