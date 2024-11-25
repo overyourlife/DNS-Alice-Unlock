@@ -1,3 +1,18 @@
+# 监听53端口
+bind [::]:53
+
+# 设置默认的上游 DNS
+server 1.0.0.1  # 主 DNS，Cloudfare Public DNS
+server 8.8.8.8  # 备用 DNS，Google Public DNS
+server 157.20.104.47 -group sg -exclude-default-group # ALice SG DNS
+server 154.12.177.22 -group hk -exclude-default-group # ALice HK DNS
+
+# 缓存设置
+cache-size 32768
+cache-persist yes
+cache-file /etc/smartdns/cache/file
+
+
 # ---------- > Global Plaform
 # > DAZN
 nameserver /dazn-api.com/sg
