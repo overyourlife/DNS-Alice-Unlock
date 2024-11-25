@@ -74,6 +74,17 @@ check_and_release_port() {
       fi
     fi
 
+    # 检测并处理 systemd-resolved 服务
+    if systemctl is-active --quiet systemd-resolved; then
+        echo -e "\033[33m检测到 systemd-resolved 正在运行，占用端口 $port。\033[0m"
+        echo -e "\033[33m尝试停止 systemd-resolved 服务...\033[0m"
+        systemctl stop systemd-resolved
+        systemctl disable systemd-resolved
+        echo -e "\033[1;32m[成功] systemd-resolved 服务已停止并禁用。\033[0m"
+    else
+        echo -e "\033[1;32msystemd-resolved 服务未运行。\033[0m"
+    fi
+
     # 检测其他未知进程并尝试终止
     echo -e "\033[33m尝试关闭端口 $port 的其他占用进程...\033[0m"
     lsof -i :$port | awk 'NR>1 {print $2}' | xargs -r kill -9
