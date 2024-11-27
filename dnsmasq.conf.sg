@@ -31,16 +31,16 @@ server=/netflixdnstest9.com/154.12.177.22
 server=/cinemax.com/154.12.177.22
 server=/forthethrone.com/154.12.177.22
 # HBO DNS解锁
-server=/hbo.com/154.12.177.22
-server=/hboasia.com/154.12.177.22
-server=/hbogo.com/154.12.177.22
-server=/hbogoasia.com/154.12.177.22
-server=/hbogoasia.hk/154.12.177.22
-server=/hbomax.com/154.12.177.22
-server=/hbonow.com/154.12.177.22
-server=/maxgo.com/154.12.177.22
-server=/max.com/154.12.177.22
-server=/discomax.com/154.12.177.22
+server=/hbo.com/1157.20.104.47
+server=/hboasia.com/157.20.104.47
+server=/hbogo.com/157.20.104.47
+server=/hbogoasia.com/157.20.104.47
+server=/hbogoasia.hk/157.20.104.47
+server=/hbomax.com/157.20.104.47
+server=/hbonow.com/157.20.104.47
+server=/maxgo.com/157.20.104.47
+server=/max.com/157.20.104.47
+server=/discomax.com/157.20.104.47
 # Hoy DNS解锁
 server=/hoy.tv/154.12.177.22
 # Bahamut Anime解锁
@@ -79,17 +79,16 @@ server=/ggpht.com/157.20.104.47
 server=/googlevideo.com/157.20.104.47
 server=/gvt2.com/157.20.104.47
 # Youtube DNS解锁
-server=/withyoutube.com/157.20.104.47
-server=/youtube-nocookie.com/157.20.104.47
-server=/youtube.com/157.20.104.47
-server=/youtubeeducation.com/157.20.104.47
-server=/youtubefanfest.com/157.20.104.47
-server=/youtubegaming.com/157.20.104.47
-server=/youtubego.com/157.20.104.47
-server=/youtubei.googleapis.com/157.20.104.47
-server=/youtubekids.com/157.20.104.47
-server=/youtubemobilesupport.com/157.20.104.47
-server=/ytimg.com/157.20.104.47
+#server=/youtube-nocookie.com/157.20.104.47
+#server=/youtube.com/157.20.104.47
+#server=/youtubeeducation.com/157.20.104.47
+#server=/youtubefanfest.com/157.20.104.47
+#server=/youtubegaming.com/157.20.104.47
+#server=/youtubego.com/157.20.104.47
+#server=/youtubei.googleapis.com/157.20.104.47
+#server=/youtubekids.com/157.20.104.47
+#server=/youtubemobilesupport.com/157.20.104.47
+#server=/ytimg.com/157.20.104.47
 # Spotify DNS解锁
 server=/audio4-ak-spotify-com.akamaized.net/157.20.104.47
 server=/dn-spotify-experiments.conductrics.com/157.20.104.47
